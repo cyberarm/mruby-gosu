@@ -1,20 +1,15 @@
 #pragma once
+
 #include "mruby.h"
+#include "mruby/data.h"
 #include "stdbool.h"
 #include <Gosu/Window.h>
 
 // struct RClass *gosu_window;
 
-Gosu_Window* mrb_gosu_window_create(mrb_state *mrb, int width, int height, bool fullscreen, double update_interval, bool resizable) {
-  return Gosu_Window_create(width, height, fullscreen, update_interval, resizable);
-}
-
-void mrb_gosu_window_show(mrb_state *mrb, Gosu_Window *window) {
-  Gosu_Window_show(window);
-}
-
-void mrb_gosu_window_destroy(mrb_state* mrb, Gosu_Window *window) {
-  Gosu_Window_destroy(window);
-}
+static mrb_value mrb_gosu_window_initialize(mrb_state *mrb, mrb_value self);
+mrb_value mrb_gosu_window_show(mrb_state *mrb, mrb_value self);
+mrb_value mrb_gosu_window_close(mrb_state *mrb, mrb_value self);
+mrb_value mrb_gosu_window_destroy(mrb_state* mrb, mrb_value self);
 
 void mrb_gosu_window_init(mrb_state *mrb, struct RClass *mrb_gosu);
