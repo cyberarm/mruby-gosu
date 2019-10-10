@@ -4,6 +4,11 @@ class Window < Gosu::Window
 
     self.caption = "Hello from mruby!"
   end
+
+  def update
+    puts "Called!"
+    self.caption = Gosu.fps
+  end
 end
 
 window = Window.new
