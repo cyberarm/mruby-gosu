@@ -40,6 +40,7 @@ mrb_gosu_image_initialize(mrb_state *mrb, mrb_value self)
   mrb_value path;
   mrb_bool tilable, retro;
   mrb_gosu_image_data_t *data;
+  int flags = 1 << 4;
 
   mrb_get_args(mrb, "Sbb", &path, &tilable, &retro);
 
@@ -58,7 +59,7 @@ mrb_gosu_image_initialize(mrb_state *mrb, mrb_value self)
   {
     mrb_raise(mrb, E_RUNTIME_ERROR, "insufficient memory.");
   }
-  data->image = Gosu_Image_create(mrb_string_cstr(mrb, path), 0);
+  data->image = Gosu_Image_create(mrb_string_cstr(mrb, path), flags);
 
   DATA_PTR(self) = data;
 

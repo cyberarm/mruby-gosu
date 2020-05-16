@@ -7,7 +7,7 @@
 #include "mruby/string.h"
 #include "stdbool.h"
 #include "string.h"
-#include <Gosu/Image.h>
+#include <Gosu/Gosu.h>
+#include "image.h"
 
-void mrb_gosu_image_init(mrb_state *mrb, struct RClass *mrb_gosu);
-Gosu_Image *mrb_gosu_image_get_ptr(mrb_state *mrb, mrb_value self);
+void mrb_gosu_font_init(mrb_state *mrb, struct RClass *mrb_gosu);

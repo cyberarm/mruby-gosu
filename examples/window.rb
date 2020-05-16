@@ -11,6 +11,8 @@ class Window < Gosu::Window
     @mruby_logo.save("logo.png")
 
     p @image.to_blob
+
+    @font = Gosu::Font.new(56, Gosu.default_font_name, 0)
   end
 
   def draw
@@ -30,8 +32,10 @@ class Window < Gosu::Window
     )
     Gosu.draw_rect(0, 0, 500, 500, 0x55ff00ff, 0, 0)
 
-    @mruby_logo.draw_rot(width / 2, height / 2,1, @angle, 0.5, 0.5, 1,1, 0xffffffff, 0)
-    @image.draw_rot(width / 4 * 3, height / 4 * 3,1, -@angle, 0.5, 0.5, 4,4, 0xffffffff, 0)
+    @mruby_logo.draw_rot(width / 2, height / 2,1, @angle, 0.5, 0.5, 1,1, 0x88ffffff, 0)
+    @image.draw_rot(width / 4 * 3, height / 4 * 3,1, -@angle, 0.5, 0.5, 4,4, 0x88ffffff, 0)
+
+    @font.draw_markup("<b>Hello</b> <c=f80>World</c>", 10, 10, 2, 1, 1, 0x55ff8844, 0)
   end
 
   def update
