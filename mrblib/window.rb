@@ -11,7 +11,6 @@ module Gosu
     end
 
     def button_down(id)
-      puts id
     end
 
     def button_up(id)

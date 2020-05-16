@@ -63,7 +63,7 @@ mrb_gosu_window_button_down_callback(void *data, int btn_id)
   mrb_state *mrb = callback->mrb;
   mrb_value self = callback->self;
 
-  mrb_funcall(mrb, self, "button_down", 1, btn_id);
+  mrb_funcall(mrb, self, "button_down", 1, mrb_fixnum_value(btn_id));
 }
 
 void
@@ -73,7 +73,7 @@ mrb_gosu_window_button_up_callback(void *data, mrb_int btn_id)
   mrb_state *mrb = callback->mrb;
   mrb_value self = callback->self;
 
-  mrb_funcall(mrb, self, "button_up", 1, btn_id);
+  mrb_funcall(mrb, self, "button_up", 1, mrb_fixnum_value(btn_id));
 }
 
 void
@@ -83,9 +83,7 @@ mrb_gosu_window_drop_callback(void *data, const char *filename)
   mrb_state *mrb = callback->mrb;
   mrb_value self = callback->self;
 
-  mrb_value string = mrb_str_new(mrb, filename, strlen(filename));
-
-  mrb_funcall(mrb, self, "drop", 1, string);
+  mrb_funcall(mrb, self, "drop", 1, mrb_str_new_cstr(mrb, filename));
 }
 
 bool
@@ -95,11 +93,7 @@ mrb_gosu_window_needs_redraw_callback(void *data)
   mrb_state *mrb = callback->mrb;
   mrb_value self = callback->self;
 
-  mrb_value returned;
-
-  returned = mrb_funcall(mrb, self, "needs_redraw?", 0);
-
-  return mrb_bool(returned);
+  return mrb_bool( mrb_funcall(mrb, self, "needs_redraw?", 0) );
 }
 
 bool
@@ -109,11 +103,7 @@ mrb_gosu_window_needs_cursor_callback(void *data)
   mrb_state *mrb = callback->mrb;
   mrb_value self = callback->self;
 
-  mrb_value returned;
-
-  returned = mrb_funcall(mrb, self, "needs_cursor?", 0);
-
-  return mrb_bool(returned);
+  return mrb_bool( mrb_funcall(mrb, self, "needs_cursor?", 0) );
 }
 
 void
@@ -124,12 +114,6 @@ mrb_gosu_window_close_callback(void *data, mrb_bool value)
   mrb_value self = callback->self;
 
   mrb_funcall(mrb, self, "close", 0);
-}
-
-static mrb_value
-mrb_gosu_window_is_button_down(mrb_state *mrb, mrb_value self)
-{
-  return self;
 }
 
 static mrb_value
@@ -221,8 +205,8 @@ mrb_gosu_window_initialize(mrb_state *mrb, mrb_value self)
   Gosu_Window_set_button_down(data->window,  mrb_gosu_window_button_down_callback,  &callback);
   Gosu_Window_set_button_up(data->window,    mrb_gosu_window_button_up_callback,    &callback);
   Gosu_Window_set_drop(data->window,         mrb_gosu_window_drop_callback,         &callback);
-  // Gosu_Window_set_needs_redraw(data->window, mrb_gosu_window_needs_redraw_callback, &callback);
-  // Gosu_Window_set_needs_cursor(data->window, mrb_gosu_window_needs_cursor_callback, &callback);
+  Gosu_Window_set_needs_redraw(data->window, mrb_gosu_window_needs_redraw_callback, &callback);
+  Gosu_Window_set_needs_cursor(data->window, mrb_gosu_window_needs_cursor_callback, &callback);
   Gosu_Window_set_close(data->window,        mrb_gosu_window_close_callback,        &callback);
 
   return self;
