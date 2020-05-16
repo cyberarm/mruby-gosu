@@ -155,6 +155,18 @@ mrb_gosu_window_set_caption(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_gosu_window_width(mrb_state *mrb, mrb_value self)
+{
+  return mrb_fixnum_value( Gosu_Window_width(mrb_gosu_window_get_ptr(mrb, self)) );
+}
+
+static mrb_value
+mrb_gosu_window_height(mrb_state *mrb, mrb_value self)
+{
+  return mrb_fixnum_value( Gosu_Window_height(mrb_gosu_window_get_ptr(mrb, self)) );
+}
+
+static mrb_value
 mrb_gosu_window_close_immediately(mrb_state *mrb, mrb_value self)
 {
   Gosu_Window_close_immediately(mrb_gosu_window_get_ptr(mrb, self));
@@ -220,6 +232,8 @@ mrb_gosu_window_init(mrb_state *mrb, struct RClass *mrb_gosu)
   mrb_define_method(mrb, mrb_gosu_window, "initialize", mrb_gosu_window_initialize,        MRB_ARGS_REQ(5));
   mrb_define_method(mrb, mrb_gosu_window, "caption",    mrb_gosu_window_caption,           MRB_ARGS_NONE());
   mrb_define_method(mrb, mrb_gosu_window, "caption=",   mrb_gosu_window_set_caption,       MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, mrb_gosu_window, "width",      mrb_gosu_window_width,             MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "height",     mrb_gosu_window_height,            MRB_ARGS_NONE());
   mrb_define_method(mrb, mrb_gosu_window, "show",       mrb_gosu_window_show,              MRB_ARGS_NONE());
   mrb_define_method(mrb, mrb_gosu_window, "tick",       mrb_gosu_window_tick,              MRB_ARGS_NONE());
   mrb_define_method(mrb, mrb_gosu_window, "close!",     mrb_gosu_window_close_immediately, MRB_ARGS_NONE());
