@@ -1,6 +1,7 @@
 #include "mruby.h"
 #include <Gosu/Gosu.h>
 #include "window.h"
+#include "text_input.h"
 #include "image.h"
 #include "font.h"
 
@@ -220,6 +221,7 @@ mrb_gosu = mrb_define_module(mrb, "Gosu");
 
   mrb_gosu_init(mrb, mrb_gosu);
   mrb_gosu_window_init(mrb, mrb_gosu);
+  mrb_gosu_text_input_init(mrb, mrb_gosu);
   mrb_gosu_image_init(mrb, mrb_gosu);
   mrb_gosu_font_init(mrb, mrb_gosu);
 }

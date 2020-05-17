@@ -1,4 +1,5 @@
 #include "window.h"
+#include "text_input.h"
 
 struct RClass *mrb_gosu_window;
 
@@ -9,6 +10,7 @@ typedef struct mrb_gosu_window_callback {
 
 typedef struct mrb_gosu_window_data_t {
   Gosu_Window *window;
+  mrb_value text_input;
 } mrb_gosu_window_data_t;
 
 static void
@@ -160,10 +162,120 @@ mrb_gosu_window_width(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value( Gosu_Window_width(mrb_gosu_window_get_ptr(mrb, self)) );
 }
 
+void
+mrb_gosu_window_set_width(mrb_state *mrb, mrb_value self)
+{
+  mrb_int width;
+  mrb_get_args(mrb, "i", &width);
+
+  Gosu_Window_set_width(mrb_gosu_window_get_ptr(mrb, self), width);
+}
+
 static mrb_value
 mrb_gosu_window_height(mrb_state *mrb, mrb_value self)
 {
   return mrb_fixnum_value( Gosu_Window_height(mrb_gosu_window_get_ptr(mrb, self)) );
+}
+
+void
+mrb_gosu_window_set_height(mrb_state *mrb, mrb_value self)
+{
+  mrb_int height;
+  mrb_get_args(mrb, "i", &height);
+
+  Gosu_Window_set_height(mrb_gosu_window_get_ptr(mrb, self), height);
+}
+
+static mrb_value
+mrb_gosu_window_update_interval(mrb_state *mrb, mrb_value self)
+{
+  return mrb_fixnum_value(Gosu_Window_update_interval(mrb_gosu_window_get_ptr(mrb, self)));
+}
+
+void mrb_gosu_window_set_update_interval(mrb_state *mrb, mrb_value self)
+{
+  mrb_float interval;
+  mrb_get_args(mrb, "f", &interval);
+
+  Gosu_Window_set_update_interval(mrb_gosu_window_get_ptr(mrb, self), interval);
+}
+
+static mrb_value
+mrb_gosu_window_mouse_x(mrb_state *mrb, mrb_value self)
+{
+  return mrb_fixnum_value(Gosu_Window_mouse_x(mrb_gosu_window_get_ptr(mrb, self)));
+}
+
+void mrb_gosu_window_set_mouse_x(mrb_state *mrb, mrb_value self)
+{
+  mrb_int point;
+  mrb_get_args(mrb, "i", &point);
+
+  Gosu_Window_set_mouse_x(mrb_gosu_window_get_ptr(mrb, self), point);
+}
+
+static mrb_value
+mrb_gosu_window_mouse_y(mrb_state *mrb, mrb_value self)
+{
+  return mrb_fixnum_value(Gosu_Window_mouse_y(mrb_gosu_window_get_ptr(mrb, self)));
+}
+
+void mrb_gosu_window_set_mouse_y(mrb_state *mrb, mrb_value self)
+{
+  mrb_int point;
+  mrb_get_args(mrb, "i", &point);
+
+  Gosu_Window_set_mouse_y(mrb_gosu_window_get_ptr(mrb, self), point);
+}
+
+static mrb_value
+mrb_gosu_window_is_resizable(mrb_state *mrb, mrb_value self)
+{
+  return mrb_bool_value( Gosu_Window_is_resizable(mrb_gosu_window_get_ptr(mrb, self)) );
+}
+
+static mrb_value
+mrb_gosu_window_is_fullscreen(mrb_state *mrb, mrb_value self)
+{
+  return mrb_bool_value( Gosu_Window_is_fullscreen(mrb_gosu_window_get_ptr(mrb, self)) );
+}
+
+mrb_value
+mrb_gosu_window_text_input(mrb_state *mrb, mrb_value self)
+{
+  Gosu_TextInput *text_input;
+  text_input = Gosu_Window_text_input(mrb_gosu_window_get_ptr(mrb, self));
+
+  if (text_input != NULL)
+  {
+    mrb_gosu_window_data_t *data = DATA_PTR(self);
+    return data->text_input;
+  } else {
+    return mrb_nil_value();
+  }
+}
+
+void
+mrb_gosu_window_set_text_input(mrb_state *mrb, mrb_value self)
+{
+  mrb_value text_input;
+  mrb_get_args(mrb, "o", &text_input);
+
+  Gosu_Window_set_text_input(mrb_gosu_window_get_ptr(mrb, self), mrb_gosu_text_input_get_ptr(mrb, text_input));
+
+  mrb_value old_text_input;
+  mrb_gosu_window_data_t *data = DATA_PTR(self);
+  old_text_input = data->text_input;
+
+  if (mrb_obj_is_instance_of(mrb, old_text_input, mrb_gosu_text_input)) {
+    mrb_gc_unregister(mrb, old_text_input);
+  }
+
+  if (mrb_obj_is_instance_of(mrb, text_input, mrb_gosu_text_input)) {
+    mrb_gc_register(mrb, text_input);
+  }
+
+  data->text_input = text_input;
 }
 
 static mrb_value
@@ -229,14 +341,26 @@ mrb_gosu_window_init(mrb_state *mrb, struct RClass *mrb_gosu)
 {
   mrb_gosu_window = mrb_define_class_under(mrb, mrb_gosu, "Window", mrb->object_class);
 
-  mrb_define_method(mrb, mrb_gosu_window, "initialize", mrb_gosu_window_initialize,        MRB_ARGS_REQ(5));
-  mrb_define_method(mrb, mrb_gosu_window, "caption",    mrb_gosu_window_caption,           MRB_ARGS_NONE());
-  mrb_define_method(mrb, mrb_gosu_window, "caption=",   mrb_gosu_window_set_caption,       MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, mrb_gosu_window, "width",      mrb_gosu_window_width,             MRB_ARGS_NONE());
-  mrb_define_method(mrb, mrb_gosu_window, "height",     mrb_gosu_window_height,            MRB_ARGS_NONE());
-  mrb_define_method(mrb, mrb_gosu_window, "show",       mrb_gosu_window_show,              MRB_ARGS_NONE());
-  mrb_define_method(mrb, mrb_gosu_window, "tick",       mrb_gosu_window_tick,              MRB_ARGS_NONE());
-  mrb_define_method(mrb, mrb_gosu_window, "close!",     mrb_gosu_window_close_immediately, MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "initialize",       mrb_gosu_window_initialize,          MRB_ARGS_REQ(5));
+  mrb_define_method(mrb, mrb_gosu_window, "caption",          mrb_gosu_window_caption,             MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "caption=",         mrb_gosu_window_set_caption,         MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, mrb_gosu_window, "width",            mrb_gosu_window_width,               MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "width=",           mrb_gosu_window_set_width,           MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, mrb_gosu_window, "height",           mrb_gosu_window_height,              MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "height=",          mrb_gosu_window_set_height,          MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, mrb_gosu_window, "update_interval",  mrb_gosu_window_update_interval,     MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "update_interval=", mrb_gosu_window_set_update_interval, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, mrb_gosu_window, "mouse_x",          mrb_gosu_window_mouse_x,             MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "mouse_x=",         mrb_gosu_window_set_mouse_x,         MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, mrb_gosu_window, "mouse_y",          mrb_gosu_window_mouse_y,             MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "mouse_y=",         mrb_gosu_window_set_mouse_y,         MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, mrb_gosu_window, "fullscreen?",      mrb_gosu_window_is_fullscreen,       MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "resizable?",       mrb_gosu_window_is_resizable,        MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "text_input",       mrb_gosu_window_text_input,          MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "text_input=",      mrb_gosu_window_set_text_input,      MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, mrb_gosu_window, "show",             mrb_gosu_window_show,                MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "tick",             mrb_gosu_window_tick,                MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_window, "close!",           mrb_gosu_window_close_immediately,   MRB_ARGS_NONE());
 }
 
 void
