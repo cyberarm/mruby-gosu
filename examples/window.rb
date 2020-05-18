@@ -1,19 +1,18 @@
 class Window < Gosu::Window
   def initialize
-    super(500, 500, false, 16.6667, true)
+    super 500, 500, resizable: true
 
     @angle = 0
     @last_time = Gosu.milliseconds
-    @mruby_logo = Gosu::Image.new("/home/cyberarm/Code/mruby/doc/mruby_logo_red_icon.png", 0, 0)
-    @image = Gosu::Image.new("/home/cyberarm/Downloads/Untitled.png", 0, 0)
+    @mruby_logo = Gosu::Image.new("/home/cyberarm/Code/mruby/doc/mruby_logo_red_icon.png")
+    @image = Gosu::Image.new("/home/cyberarm/Downloads/Untitled.png", retro: true)
 
-    @mruby_logo.insert(@image, 50, 50)
-    @mruby_logo.save("logo.png")
+    # p @image.to_blob
 
-    p @image.to_blob
+    @q = Gosu::Image.from_blob(10, 10, "\1\1\1\f")
 
-    @font = Gosu::Font.new(56, Gosu.default_font_name, 0)
-    self.text_input = Gosu::TextInput.new
+    # @font = Gosu::Font.new(56, Gosu.default_font_name, 0)
+    # self.text_input = Gosu::TextInput.new
   end
 
   def draw
@@ -34,12 +33,14 @@ class Window < Gosu::Window
     Gosu.draw_rect(0, 0, 500, 500, 0x55ff00ff, 0, 0)
 
     @mruby_logo.draw_rot(width / 2, height / 2,1, @angle, 0.5, 0.5, 1,1, 0x88ffffff, 0)
-    @image.draw_rot(width / 4 * 3, height / 4 * 3,1, -@angle, 0.5, 0.5, 4,4, 0x88ffffff, 0)
+    @image.draw_rot(width / 4 * 3, height / 4 * 3,1, -@angle, 0.5, 0.5, 6,6, 0x88ffffff, 0)
 
-    @font.draw_markup("<b>Hello</b> <c=f80>World</c>", 10, 10, 2, 1, 1, 0x55ff8844, 0)
-    if text_input.respond_to?(:text)
-      @font.draw_text(text_input.text, 10, 72, 2, 1, 1, 0xffffffff, 0)
-    end
+    # @q.draw(mouse_x, mouse_y, 10, 1, 1, 0xff_ffffffff, 0)
+
+    # @font.draw_markup("<b>Hello</b> <c=f80>World</c>", 10, 10, 2, 1, 1, 0x55ff8844, 0)
+    # if text_input.respond_to?(:text)
+    #   @font.draw_text(text_input.text, 10, 72, 2, 1, 1, 0xffffffff, 0)
+    # end
   end
 
   def update

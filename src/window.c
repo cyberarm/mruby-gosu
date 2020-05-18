@@ -287,7 +287,7 @@ mrb_gosu_window_close_immediately(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-mrb_gosu_window_initialize(mrb_state *mrb, mrb_value self)
+mrb_gosu_window_new(mrb_state *mrb, mrb_value self)
 {
   mrb_int width, height;
   mrb_float update_interval;
@@ -341,7 +341,7 @@ mrb_gosu_window_init(mrb_state *mrb, struct RClass *mrb_gosu)
 {
   mrb_gosu_window = mrb_define_class_under(mrb, mrb_gosu, "Window", mrb->object_class);
 
-  mrb_define_method(mrb, mrb_gosu_window, "initialize",       mrb_gosu_window_initialize,          MRB_ARGS_REQ(5));
+  mrb_define_method(mrb, mrb_gosu_window, "_new",             mrb_gosu_window_new,                 MRB_ARGS_REQ(5));
   mrb_define_method(mrb, mrb_gosu_window, "caption",          mrb_gosu_window_caption,             MRB_ARGS_NONE());
   mrb_define_method(mrb, mrb_gosu_window, "caption=",         mrb_gosu_window_set_caption,         MRB_ARGS_REQ(1));
   mrb_define_method(mrb, mrb_gosu_window, "width",            mrb_gosu_window_width,               MRB_ARGS_NONE());

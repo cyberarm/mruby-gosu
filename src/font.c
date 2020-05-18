@@ -173,7 +173,7 @@ void mrb_gosu_font_init(mrb_state *mrb, struct RClass *mrb_gosu)
 {
   mrb_gosu_font = mrb_define_class_under(mrb, mrb_gosu, "Font", mrb->object_class);
 
-  mrb_define_method(mrb, mrb_gosu_font, "initialize", mrb_gosu_font_initialize, MRB_ARGS_REQ(3));
+  mrb_define_method(mrb, mrb_gosu_font, "_new", mrb_gosu_font_initialize, MRB_ARGS_REQ(3));
   mrb_define_method(mrb, mrb_gosu_font, "name", mrb_gosu_font_name, MRB_ARGS_NONE());
   mrb_define_method(mrb, mrb_gosu_font, "height", mrb_gosu_font_height, MRB_ARGS_NONE());
   mrb_define_method(mrb, mrb_gosu_font, "flags", mrb_gosu_font_flags, MRB_ARGS_NONE());
@@ -181,10 +181,10 @@ void mrb_gosu_font_init(mrb_state *mrb, struct RClass *mrb_gosu)
   mrb_define_method(mrb, mrb_gosu_font, "text_width", mrb_gosu_font_text_width, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, mrb_gosu_font, "markup_width", mrb_gosu_font_markup_width, MRB_ARGS_REQ(1));
 
-  mrb_define_method(mrb, mrb_gosu_font, "draw_text", mrb_gosu_font_draw_text, MRB_ARGS_REQ(8));
-  mrb_define_method(mrb, mrb_gosu_font, "draw_markup", mrb_gosu_font_draw_markup, MRB_ARGS_REQ(8));
-  mrb_define_method(mrb, mrb_gosu_font, "draw_text_rel", mrb_gosu_font_draw_text_rel, MRB_ARGS_REQ(10));
-  mrb_define_method(mrb, mrb_gosu_font, "draw_markup_rel", mrb_gosu_font_draw_markup_rel, MRB_ARGS_REQ(10));
+  mrb_define_method(mrb, mrb_gosu_font, "_draw_text", mrb_gosu_font_draw_text, MRB_ARGS_REQ(8));
+  mrb_define_method(mrb, mrb_gosu_font, "_draw_markup", mrb_gosu_font_draw_markup, MRB_ARGS_REQ(8));
+  mrb_define_method(mrb, mrb_gosu_font, "_draw_text_rel", mrb_gosu_font_draw_text_rel, MRB_ARGS_REQ(10));
+  mrb_define_method(mrb, mrb_gosu_font, "_draw_markup_rel", mrb_gosu_font_draw_markup_rel, MRB_ARGS_REQ(10));
 
-  mrb_define_method(mrb, mrb_gosu_font, "draw_markup_rel", mrb_gosu_font_draw_markup_rel, MRB_ARGS_REQ(10));
+  mrb_define_method(mrb, mrb_gosu_font, "_set_image", mrb_gosu_font_set_image, MRB_ARGS_REQ(3));
 }

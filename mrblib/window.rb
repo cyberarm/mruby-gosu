@@ -1,8 +1,8 @@
 module Gosu
   class Window
-    # def initialize(width, height, fullscreen: false, update_interval: 16.6667, resizable: false)
-    #   super(width, height, fullscreen, update_interval, resizable)
-    # end
+    def initialize(width, height, fullscreen: false, update_interval: 16.6667, resizable: false)
+      _new(width, height, fullscreen, update_interval, resizable)
+    end
 
     def draw
     end

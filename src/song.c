@@ -118,7 +118,7 @@ void mrb_gosu_song_init(mrb_state *mrb, struct RClass *mrb_gosu)
 
   mrb_define_method(mrb, mrb_gosu_song, "initialize", mrb_gosu_song_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, mrb_gosu_song, "volume=",    mrb_gosu_song_set_volume, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, mrb_gosu_song, "play",       mrb_gosu_song_play,       MRB_ARGS_NONE());
+  mrb_define_method(mrb, mrb_gosu_song, "_play",      mrb_gosu_song_play,       MRB_ARGS_NONE());
   mrb_define_method(mrb, mrb_gosu_song, "pause",      mrb_gosu_song_pause,      MRB_ARGS_NONE());
   mrb_define_method(mrb, mrb_gosu_song, "paused?",    mrb_gosu_song_is_paused,  MRB_ARGS_NONE());
   mrb_define_method(mrb, mrb_gosu_song, "playing?",   mrb_gosu_song_is_playing, MRB_ARGS_NONE());

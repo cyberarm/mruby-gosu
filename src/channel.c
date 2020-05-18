@@ -37,11 +37,10 @@ mrb_gosu_channel_get_ptr(mrb_state *mrb, mrb_value self)
 mrb_value
 mrb_gosu_channel_initialize(mrb_state *mrb, mrb_value self)
 {
-  mrb_value args, channel;
+  mrb_value channel;
   mrb_gosu_channel_data_t *data;
 
-  mrb_get_args(mrb, "A", &args);
-  channel = mrb_ary_entry(args, 0);
+  mrb_get_args(mrb, "o", &channel);
 
   data = (mrb_gosu_channel_data_t *)DATA_PTR(self);
 

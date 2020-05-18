@@ -1,6 +1,10 @@
 #include "image.h"
 
-struct RClass *mrb_gosu_image;
+typedef struct mrb_gosu_image_load_tiles_data
+{
+  mrb_state *mrb;
+  mrb_value array;
+} mrb_gosu_image_load_tiles_data;
 
 typedef struct mrb_gosu_image_data_t
 {
@@ -34,15 +38,14 @@ mrb_gosu_image_get_ptr(mrb_state *mrb, mrb_value self)
   return data->image;
 }
 
-mrb_value
-mrb_gosu_image_initialize(mrb_state *mrb, mrb_value self)
+static mrb_value
+mrb_gosu_image_new(mrb_state *mrb, mrb_value self)
 {
   mrb_value path;
-  mrb_bool tilable, retro;
+  mrb_int flags;
   mrb_gosu_image_data_t *data;
-  int flags = 1 << 4;
 
-  mrb_get_args(mrb, "Sbb", &path, &tilable, &retro);
+  mrb_get_args(mrb, "Si", &path, &flags);
 
   data = (mrb_gosu_image_data_t *)DATA_PTR(self);
 
@@ -66,74 +69,168 @@ mrb_gosu_image_initialize(mrb_state *mrb, mrb_value self)
   return self;
 }
 
-void
+static mrb_value
+mrb_gosu_image_new_from_pointer(mrb_state *mrb, mrb_value self)
+{
+  mrb_value pointer;
+  mrb_gosu_image_data_t *data;
+
+  mrb_get_args(mrb, "o", &pointer);
+
+  data = (mrb_gosu_image_data_t *)DATA_PTR(self);
+
+  if (data)
+  {
+    mrb_free(mrb, data);
+  }
+
+  DATA_TYPE(self) = &mrb_gosu_image_data_type;
+  DATA_PTR(self) = NULL;
+
+  data = (mrb_gosu_image_data_t *)mrb_malloc(mrb, sizeof(mrb_gosu_image_data_t));
+
+  if (data == NULL)
+  {
+    mrb_raise(mrb, E_RUNTIME_ERROR, "insufficient memory.");
+  }
+  data->image = (Gosu_Image *)mrb_cptr(pointer);
+
+  DATA_PTR(self) = data;
+
+  return self;
+}
+
+// TODO: This is broken.
+// More research into how to work with binary strings in mruby is needed.
+static mrb_value
+mrb_gosu_image_from_blob(mrb_state *mrb, mrb_value self)
+{
+  mrb_value blob;
+  mrb_int width, height, flags;
+  mrb_get_args(mrb, "iioi", &width, &height, &blob, &flags);
+
+  unsigned char *c_blob;
+  c_blob = mrb_basic_ptr(blob);
+
+  Gosu_Image *image;
+  image = Gosu_Image_create_from_blob(c_blob, strlen(c_blob), width, height, flags);
+
+  mrb_value pointer = mrb_cptr_value(mrb, image);
+
+  return mrb_obj_new(mrb, mrb_gosu_image, 1, &pointer);
+}
+
+void mrb_gosu_image_load_tiles_function(void *data, Gosu_Image *image_ptr)
+{
+  mrb_gosu_image_load_tiles_data *_data = data;
+  mrb_value pointer;
+  pointer = mrb_cptr_value(_data->mrb, image_ptr);
+
+  mrb_ary_push(_data->mrb, _data->array, mrb_obj_new(_data->mrb, mrb_gosu_image, 1, &pointer));
+}
+
+static mrb_value
+mrb_gosu_image_load_tiles(mrb_state *mrb, mrb_value self)
+{
+  mrb_value path;
+  mrb_int tile_width, tile_height, flags;
+  mrb_get_args(mrb, "Siii", &path, &tile_width, &tile_height, &flags);
+
+  mrb_value images = mrb_ary_new(mrb);
+  mrb_gosu_image_load_tiles_data data;
+  data.mrb = mrb;
+  data.array = images;
+
+  Gosu_Image_create_from_tiles(mrb_string_cstr(mrb, path), tile_width, tile_height, mrb_gosu_image_load_tiles_function, (void *)&data, flags);
+
+  return images;
+}
+
+static mrb_value
 mrb_gosu_image_draw(mrb_state *mrb, mrb_value self) {
   mrb_float x, y, z, scale_x, scale_y;
   mrb_int color, mode;
   mrb_get_args(mrb, "fffffii", &x, &y, &z, &scale_x, &scale_y, &color, &mode);
 
   Gosu_Image_draw(mrb_gosu_image_get_ptr(mrb, self), x, y, z, scale_x, scale_y, color, mode);
+
+  return self;
 }
 
-void
+static mrb_value
 mrb_gosu_image_draw_rot(mrb_state *mrb, mrb_value self) {
   mrb_float x, y, z, angle, center_x, center_y, scale_x, scale_y;
   mrb_int color, mode;
   mrb_get_args(mrb, "ffffffffii", &x, &y, &z, &angle, &center_x, &center_y, &scale_x, &scale_y, &color, &mode);
 
   Gosu_Image_draw_rot(mrb_gosu_image_get_ptr(mrb, self), x, y, z, angle, center_x, center_y, scale_x, scale_y, color, mode);
+
+  return self;
 }
 
-void
+static mrb_value
 mrb_gosu_image_draw_as_quad(mrb_state *mrb, mrb_value self) {
   mrb_float x1, y1, x2, y2, x3, y3, x4, y4, z;
   mrb_int c1, c2, c3, c4, mode;
   mrb_get_args(mrb, "ffiffiffiffifi", &x1, &y1, &c1, &x2, &y2, &c2, &x3, &y3, &c3, &x4, &y4, &c4, &z, &mode);
 
   Gosu_Image_draw_as_quad(mrb_gosu_image_get_ptr(mrb, self), x1, y1, c1, x2, y2, c2, x3, y3, c3, x4, y4, c4, z, mode);
+
+  return self;
 }
 
-mrb_value
+static mrb_value
 mrb_gosu_image_width(mrb_state *mrb, mrb_value self) {
   return mrb_fixnum_value( Gosu_Image_width(mrb_gosu_image_get_ptr(mrb, self)) );
 }
 
-mrb_value
+static mrb_value
 mrb_gosu_image_height(mrb_state *mrb, mrb_value self) {
   return mrb_fixnum_value( Gosu_Image_height(mrb_gosu_image_get_ptr(mrb, self)) );
 }
 
-void
+static mrb_value
 mrb_gosu_image_save(mrb_state *mrb, mrb_value self) {
   mrb_value path;
   mrb_get_args(mrb, "S", &path);
 
   Gosu_Image_save(mrb_gosu_image_get_ptr(mrb, self), mrb_str_to_cstr(mrb, path));
+
+  return self;
 }
 
-mrb_value
+static mrb_value
 mrb_gosu_image_to_blob(mrb_state *mrb, mrb_value self) {
   // TODO: see if mruby can handle unsigned char
   return mrb_str_new_cstr(mrb, Gosu_Image_to_blob(mrb_gosu_image_get_ptr(mrb, self)));
 }
 
-void
+static mrb_value
 mrb_gosu_image_insert(mrb_state *mrb, mrb_value self) {
   mrb_value other_image;
   mrb_int x, y;
   mrb_get_args(mrb, "oii", &other_image, &x, &y);
 
   Gosu_Image_insert(mrb_gosu_image_get_ptr(mrb, self), mrb_gosu_image_get_ptr(mrb, other_image), x, y);
+
+  return self;
 }
 
 void mrb_gosu_image_init(mrb_state *mrb, struct RClass *mrb_gosu)
 {
   mrb_gosu_image = mrb_define_class_under(mrb, mrb_gosu, "Image", mrb->object_class);
 
-  mrb_define_method(mrb, mrb_gosu_image, "initialize", mrb_gosu_image_initialize, MRB_ARGS_REQ(3));
-  mrb_define_method(mrb, mrb_gosu_image, "draw", mrb_gosu_image_draw, MRB_ARGS_REQ(7));
-  mrb_define_method(mrb, mrb_gosu_image, "draw_rot", mrb_gosu_image_draw_rot, MRB_ARGS_REQ(10));
-  mrb_define_method(mrb, mrb_gosu_image, "draw_as_quad", mrb_gosu_image_draw_as_quad, MRB_ARGS_REQ(14));
+  mrb_define_class_method(mrb, mrb_gosu_image, "_load_tiles", mrb_gosu_image_load_tiles, MRB_ARGS_REQ(4));
+  mrb_define_class_method(mrb, mrb_gosu_image, "_from_blob", mrb_gosu_image_from_blob, MRB_ARGS_REQ(4));
+  // mrb_define_class_method(mrb, mrb_gosu_image, "_from_text", mrb_gosu_image_from_text, MRB_ARGS_REQ(4));
+  // mrb_define_class_method(mrb, mrb_gosu_image, "_from_markup", mrb_gosu_image_from_markup, MRB_ARGS_REQ(4));
+
+  mrb_define_method(mrb, mrb_gosu_image, "_new", mrb_gosu_image_new, MRB_ARGS_REQ(2));
+  mrb_define_method(mrb, mrb_gosu_image, "_new_from_pointer", mrb_gosu_image_new_from_pointer, MRB_ARGS_REQ(1));
+
+  mrb_define_method(mrb, mrb_gosu_image, "_draw", mrb_gosu_image_draw, MRB_ARGS_REQ(7));
+  mrb_define_method(mrb, mrb_gosu_image, "_draw_rot", mrb_gosu_image_draw_rot, MRB_ARGS_REQ(10));
+  mrb_define_method(mrb, mrb_gosu_image, "_draw_as_quad", mrb_gosu_image_draw_as_quad, MRB_ARGS_REQ(14));
 
   mrb_define_method(mrb, mrb_gosu_image, "width", mrb_gosu_image_width, MRB_ARGS_NONE());
   mrb_define_method(mrb, mrb_gosu_image, "height", mrb_gosu_image_height, MRB_ARGS_NONE());

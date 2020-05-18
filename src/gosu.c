@@ -8,6 +8,12 @@
 #include "song.h"
 #include "channel.h"
 
+typedef struct mrb_gosu_callback_data
+{
+  mrb_state *mrb;
+  mrb_value block;
+} mrb_gosu_callback_data;
+
 mrb_value
 mrb_gosu_fps(mrb_state *mrb) {
   return mrb_fixnum_value(Gosu_fps());
@@ -107,58 +113,159 @@ mrb_gosu_draw_rect(mrb_state *mrb, mrb_value self) {
   return self;
 }
 
+void mrb_gosu_callback_function(mrb_gosu_callback_data *data)
+{
+  mrb_funcall(data->mrb, data->block, "call", 0);
+}
+
+mrb_value
+mrb_gosu_translate(mrb_state *mrb, mrb_value self)
+{
+  mrb_float x, y;
+  mrb_value block;
+  mrb_get_args(mrb, "ff&", &x, &y, &block);
+
+  mrb_gosu_callback_data data;
+  data.mrb = mrb;
+  data.block = block;
+
+  Gosu_translate(x, y, mrb_gosu_callback_function, &data);
+
+  return self;
+}
+
+mrb_value
+mrb_gosu_rotate(mrb_state *mrb, mrb_value self)
+{
+  mrb_float angle, around_x, around_y;
+  mrb_value block;
+  mrb_get_args(mrb, "fff&", &around_x, &around_y, &block);
+
+  mrb_gosu_callback_data data;
+  data.mrb = mrb;
+  data.block = block;
+
+  Gosu_rotate(angle, around_x, around_y, mrb_gosu_callback_function, &data);
+
+  return self;
+}
+
+mrb_value
+mrb_gosu_scale(mrb_state *mrb, mrb_value self)
+{
+  mrb_float scale_x, scale_y, around_x, around_y;
+  mrb_value block;
+  mrb_get_args(mrb, "ffff&", &scale_x, &scale_y, &around_x, &around_y, &block);
+
+  mrb_gosu_callback_data data;
+  data.mrb = mrb;
+  data.block = block;
+
+  Gosu_scale(scale_x, scale_y, around_x, around_y, mrb_gosu_callback_function, &data);
+
+  return self;
+}
+
+mrb_value
+mrb_gosu_transform(mrb_state *mrb, mrb_value self)
+{
+  mrb_float m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15;
+  mrb_value block;
+  mrb_get_args(mrb, "ffffffffffffffff&", &m0, &m1, &m2, &m3, &m4, &m5, &m6, &m7, &m8, &m9, &m10, &m11, &m12, &m13, &m14, &m15, &block);
+
+  mrb_gosu_callback_data data;
+  data.mrb = mrb;
+  data.block = block;
+
+  Gosu_transform(m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, mrb_gosu_callback_function, &data);
+
+  return self;
+}
+
+mrb_value
+mrb_gosu_render(mrb_state *mrb, mrb_value self)
+{
+  mrb_int width, height, flags;
+  mrb_value block;
+  mrb_get_args(mrb, "iii&", &width, &height, &flags, &block);
+
+  mrb_gosu_callback_data data;
+  data.mrb = mrb;
+  data.block = block;
+
+  mrb_value pointer = mrb_cptr_value( mrb, Gosu_render(width, height, mrb_gosu_callback_function, &data, flags) );
+
+  return mrb_obj_new(mrb, mrb_gosu_image, 1, &pointer);
+}
+
+mrb_value
+mrb_gosu_record(mrb_state *mrb, mrb_value self)
+{
+  mrb_int width, height;
+  mrb_value block;
+  mrb_get_args(mrb, "ii&", &width, &height, &block);
+
+  mrb_gosu_callback_data data;
+  data.mrb = mrb;
+  data.block = block;
+
+  mrb_value pointer = mrb_cptr_value( mrb, Gosu_record(width, height, mrb_gosu_callback_function, &data) );
+
+  return mrb_obj_new(mrb, mrb_gosu_image, 1, &pointer);
+}
+
 mrb_value
 mrb_gosu_offset_x(mrb_state *mrb, mrb_value self) {
   mrb_float angle, radius;
-  mrb_get_args("ff", &angle, &radius);
+  mrb_get_args(mrb, "ff", &angle, &radius);
 
-  return mrb_fixnum_value(Gosu_offset_x(angle, radius));
+  return mrb_float_value(mrb, Gosu_offset_x(angle, radius));
 }
 
 mrb_value
 mrb_gosu_offset_y(mrb_state *mrb, mrb_value self) {
   mrb_float angle, radius;
-  mrb_get_args("ff", &angle, &radius);
+  mrb_get_args(mrb, "ff", &angle, &radius);
 
-  return mrb_fixnum_value(Gosu_offset_y(angle, radius));
+  return mrb_float_value(mrb, Gosu_offset_y(angle, radius));
 }
 
 mrb_value
 mrb_gosu_distance(mrb_state *mrb, mrb_value self) {
   mrb_float x1, y1, x2, y2;
-  mrb_get_args("ffff", &x1, &y1, &x2, &y2);
+  mrb_get_args(mrb, "ffff", &x1, &y1, &x2, &y2);
 
-  return mrb_fixnum_value(Gosu_distance(x1, y1, x2, y2));
+  return mrb_float_value(mrb, Gosu_distance(x1, y1, x2, y2));
 }
 
 mrb_value
 mrb_gosu_angle(mrb_state *mrb, mrb_value self) {
   mrb_float x1, y1, x2, y2;
-  mrb_get_args("ffff", &x1, &y1, &x2, &y2);
+  mrb_get_args(mrb, "ffff", &x1, &y1, &x2, &y2);
 
-  return mrb_fixnum_value(Gosu_angle(x1, y1, x2, y2));
+  return mrb_float_value(mrb, Gosu_angle(x1, y1, x2, y2));
 }
 
 mrb_value
 mrb_gosu_angle_diff(mrb_state *mrb, mrb_value self) {
   mrb_float angle1, angle2;
-  mrb_get_args("ff", &angle1, &angle2);
+  mrb_get_args(mrb, "ff", &angle1, &angle2);
 
-  return mrb_fixnum_value(Gosu_angle_diff(angle1, angle2));
+  return mrb_float_value(mrb, Gosu_angle_diff(angle1, angle2));
 }
 
 mrb_value
 mrb_gosu_random(mrb_state *mrb, mrb_value self) {
   mrb_float min, max;
-  mrb_get_args("ff", &min, &max);
+  mrb_get_args(mrb, "ff", &min, &max);
 
-  return mrb_fixnum_value(Gosu_random(min, max));
+  return mrb_float_value(mrb, Gosu_random(min, max));
 }
 
 mrb_value
 mrb_gosu_screen_width(mrb_state *mrb, mrb_value self) {
   // mrb_value window_pointer;
-  // mrb_get_args("ff", &window_pointer);
+  // mrb_get_args(mrb, "ff", &window_pointer);
 
   return mrb_fixnum_value(Gosu_screen_width(NULL));
 }
@@ -166,7 +273,7 @@ mrb_gosu_screen_width(mrb_state *mrb, mrb_value self) {
 mrb_value
 mrb_gosu_screen_height(mrb_state *mrb, mrb_value self) {
   // mrb_value window_pointer;
-  // mrb_get_args("ff", &window_pointer);
+  // mrb_get_args(mrb, "ff", &window_pointer);
 
   return mrb_fixnum_value(Gosu_screen_height(NULL));
 }
@@ -174,7 +281,7 @@ mrb_gosu_screen_height(mrb_state *mrb, mrb_value self) {
 mrb_value
 mrb_gosu_available_width(mrb_state *mrb, mrb_value self) {
   // mrb_value window_pointer;
-  // mrb_get_args("ff", &window_pointer);
+  // mrb_get_args(mrb, "ff", &window_pointer);
 
   return mrb_fixnum_value(Gosu_available_width(NULL));
 }
@@ -182,7 +289,7 @@ mrb_gosu_available_width(mrb_state *mrb, mrb_value self) {
 mrb_value
 mrb_gosu_available_height(mrb_state *mrb, mrb_value self) {
   // mrb_value window_pointer;
-  // mrb_get_args("ff", &window_pointer);
+  // mrb_get_args(mrb, "ff", &window_pointer);
 
   return mrb_fixnum_value(Gosu_available_height(NULL));
 }
@@ -202,6 +309,14 @@ void mrb_gosu_init(mrb_state *mrb, struct RClass *mrb_gosu) {
   mrb_define_module_function(mrb, mrb_gosu, "draw_quad", mrb_gosu_draw_quad, MRB_ARGS_REQ(14));
   mrb_define_module_function(mrb, mrb_gosu, "draw_triangle", mrb_gosu_draw_triangle, MRB_ARGS_REQ(11));
   mrb_define_module_function(mrb, mrb_gosu, "draw_rect", mrb_gosu_draw_rect, MRB_ARGS_REQ(7));
+
+  mrb_define_module_function(mrb, mrb_gosu, "translate", mrb_gosu_translate, MRB_ARGS_REQ(3));
+  mrb_define_module_function(mrb, mrb_gosu, "_rotate", mrb_gosu_rotate, MRB_ARGS_REQ(4));
+  mrb_define_module_function(mrb, mrb_gosu, "_scale", mrb_gosu_scale, MRB_ARGS_REQ(5));
+  mrb_define_module_function(mrb, mrb_gosu, "transform", mrb_gosu_transform, MRB_ARGS_REQ(17));
+
+  mrb_define_module_function(mrb, mrb_gosu, "_render", mrb_gosu_render, MRB_ARGS_REQ(4));
+  mrb_define_module_function(mrb, mrb_gosu, "record", mrb_gosu_record, MRB_ARGS_REQ(3));
 
   mrb_define_module_function(mrb, mrb_gosu, "offset_x", mrb_gosu_offset_x, MRB_ARGS_REQ(2));
   mrb_define_module_function(mrb, mrb_gosu, "offset_y", mrb_gosu_offset_y, MRB_ARGS_REQ(2));

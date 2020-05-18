@@ -71,13 +71,12 @@ mrb_gosu_sample_play(mrb_state *mrb, mrb_value self)
   mrb_bool looping;
 
   mrb_get_args(mrb, "ffb", &volume, &speed, &looping);
-  Gosu_Channel *channel = Gosu_Sample_play(
+  Gosu_Channel *pointer = Gosu_Sample_play(
     mrb_gosu_sample_get_ptr(mrb, self), volume, speed, looping);
 
-  mrb_value args = mrb_ary_new_capa(mrb, 1);
-  mrb_ary_push(mrb, args, mrb_cptr_value(mrb, channel));
+  mrb_value channel = mrb_cptr_value(mrb, pointer);
 
-  return mrb_obj_new(mrb, mrb_gosu_channel, 1, &args);
+  return mrb_obj_new(mrb, mrb_gosu_channel, 1, &channel);
 }
 
 static mrb_value
@@ -87,13 +86,12 @@ mrb_gosu_sample_play_pan(mrb_state *mrb, mrb_value self)
   mrb_bool looping;
 
   mrb_get_args(mrb, "fffb", &pan, &volume, &speed, &looping);
-  Gosu_Channel *channel = Gosu_Sample_play_pan(
+  Gosu_Channel *pointer = Gosu_Sample_play_pan(
     mrb_gosu_sample_get_ptr(mrb, self), pan, volume, speed, looping);
 
-  mrb_value args = mrb_ary_new_capa(mrb, 1);
-  mrb_ary_push(mrb, args, mrb_cptr_value(mrb, channel));
+  mrb_value channel = mrb_cptr_value(mrb, pointer);
 
-  return mrb_obj_new(mrb, mrb_gosu_channel, 1, &args);
+  return mrb_obj_new(mrb, mrb_gosu_channel, 1, &channel);
 }
 
 void mrb_gosu_sample_init(mrb_state *mrb, struct RClass *mrb_gosu)
@@ -101,6 +99,6 @@ void mrb_gosu_sample_init(mrb_state *mrb, struct RClass *mrb_gosu)
   mrb_gosu_sample = mrb_define_class_under(mrb, mrb_gosu, "Sample", mrb->object_class);
 
   mrb_define_method(mrb, mrb_gosu_sample, "initialize", mrb_gosu_sample_initialize, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, mrb_gosu_sample, "play",       mrb_gosu_sample_play, MRB_ARGS_REQ(3));
-  mrb_define_method(mrb, mrb_gosu_sample, "play_pan",   mrb_gosu_sample_play_pan, MRB_ARGS_REQ(4));
+  mrb_define_method(mrb, mrb_gosu_sample, "_play",      mrb_gosu_sample_play, MRB_ARGS_REQ(3));
+  mrb_define_method(mrb, mrb_gosu_sample, "_play_pan",  mrb_gosu_sample_play_pan, MRB_ARGS_REQ(4));
 }
