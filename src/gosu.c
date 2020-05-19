@@ -7,6 +7,7 @@
 #include "sample.h"
 #include "song.h"
 #include "channel.h"
+#include "color.h"
 
 typedef struct mrb_gosu_callback_data
 {
@@ -305,10 +306,10 @@ void mrb_gosu_init(mrb_state *mrb, struct RClass *mrb_gosu) {
   mrb_define_module_function(mrb, mrb_gosu, "button_id_to_char", mrb_gosu_button_id_to_char, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, mrb_gosu, "char_to_button_id", mrb_gosu_char_to_button_id, MRB_ARGS_REQ(1));
 
-  mrb_define_module_function(mrb, mrb_gosu, "draw_line", mrb_gosu_draw_line, MRB_ARGS_REQ(8));
-  mrb_define_module_function(mrb, mrb_gosu, "draw_quad", mrb_gosu_draw_quad, MRB_ARGS_REQ(14));
-  mrb_define_module_function(mrb, mrb_gosu, "draw_triangle", mrb_gosu_draw_triangle, MRB_ARGS_REQ(11));
-  mrb_define_module_function(mrb, mrb_gosu, "draw_rect", mrb_gosu_draw_rect, MRB_ARGS_REQ(7));
+  mrb_define_module_function(mrb, mrb_gosu, "_draw_line", mrb_gosu_draw_line, MRB_ARGS_REQ(8));
+  mrb_define_module_function(mrb, mrb_gosu, "_draw_quad", mrb_gosu_draw_quad, MRB_ARGS_REQ(14));
+  mrb_define_module_function(mrb, mrb_gosu, "_draw_triangle", mrb_gosu_draw_triangle, MRB_ARGS_REQ(11));
+  mrb_define_module_function(mrb, mrb_gosu, "_draw_rect", mrb_gosu_draw_rect, MRB_ARGS_REQ(7));
 
   mrb_define_module_function(mrb, mrb_gosu, "translate", mrb_gosu_translate, MRB_ARGS_REQ(3));
   mrb_define_module_function(mrb, mrb_gosu, "_rotate", mrb_gosu_rotate, MRB_ARGS_REQ(4));
@@ -345,6 +346,7 @@ mrb_gosu = mrb_define_module(mrb, "Gosu");
   mrb_gosu_sample_init(mrb, mrb_gosu);
   mrb_gosu_song_init(mrb, mrb_gosu);
   mrb_gosu_channel_init(mrb, mrb_gosu);
+  mrb_gosu_color_init(mrb, mrb_gosu);
 }
 
 void mrb_mruby_gosu_gem_final(mrb_state *mrb) {

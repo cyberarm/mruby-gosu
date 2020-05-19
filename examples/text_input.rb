@@ -107,14 +107,12 @@ class TextInputDemo < Gosu::Window
     text =
       "This demo explains (in the source code) how to use the Gosu::TextInput API by building a little TextField class around it.
 
-      Each text field can take up to 30 characters, and you can use Tab to switch between them.
-
-      As in every example, press <b>S</b> to look at the source code."
+      Each text field can take up to 30 characters, and you can use Tab to switch between them."
 
     # Remove all leading spaces so the text is left-aligned
     text.gsub! /^ +/, ""
 
-    @text = Gosu::Image.from_text text, 20, width: 540
+    @text = Gosu::Image.from_markup text, 20, width: 540
 
     # Set up an array of three text fields.
     @text_fields = Array.new(3) { |index| TextField.new(self, 50, 300 + index * 50) }

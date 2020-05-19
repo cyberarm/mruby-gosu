@@ -89,9 +89,9 @@ mrb_gosu_font_text_width(mrb_state *mrb, mrb_value self)
   mrb_value string;
   mrb_get_args(mrb, "S", &string);
 
-  Gosu_Font_text_width(mrb_gosu_font_get_ptr(mrb, self), mrb_string_cstr(mrb, string));
+  mrb_value width = mrb_float_value( mrb, Gosu_Font_text_width(mrb_gosu_font_get_ptr(mrb, self), mrb_string_cstr(mrb, string)) );
 
-  return self;
+  return width;
 }
 
 mrb_value
@@ -100,9 +100,9 @@ mrb_gosu_font_markup_width(mrb_state *mrb, mrb_value self)
   mrb_value string;
   mrb_get_args(mrb, "S", &string);
 
-  Gosu_Font_markup_width(mrb_gosu_font_get_ptr(mrb, self), mrb_string_cstr(mrb, string));
+  mrb_value width = mrb_float_value( mrb, Gosu_Font_markup_width(mrb_gosu_font_get_ptr(mrb, self), mrb_string_cstr(mrb, string)) );
 
-  return self;
+  return width;
 }
 
 mrb_value

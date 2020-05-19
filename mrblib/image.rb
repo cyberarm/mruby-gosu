@@ -8,6 +8,18 @@ module Gosu
       _from_blob(width, height, blob, Gosu.image_flags(tileable: tileable, retro: retro))
     end
 
+    def self.from_text(text, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: :left,
+                       bold: false, italic: false, underline: false, retro: false)
+      _from_text(text.to_s, line_height, font, width, spacing,
+                 Gosu.font_alignment_flags(align), Gosu.font_flags(bold: bold, italic: italic, underline: underline), Gosu.image_flags(retro: retro))
+    end
+
+    def self.from_markup(markup, line_height, font: Gosu.default_font_name, width: -1, spacing: 0, align: :left,
+                       bold: false, italic: false, underline: false, retro: false)
+      _from_markup(markup.to_s, line_height, font, width, spacing,
+                   Gosu.font_alignment_flags(align), Gosu.font_flags(bold: bold, italic: italic, underline: underline), Gosu.image_flags(retro: retro))
+    end
+
     def initialize(source, tileable: false, retro: false)
       if source.is_a?(String)
         _new(source, Gosu.image_flags(tileable: tileable, retro: retro))

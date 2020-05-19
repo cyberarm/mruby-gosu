@@ -261,17 +261,21 @@ mrb_gosu_window_set_text_input(mrb_state *mrb, mrb_value self)
   mrb_value text_input;
   mrb_get_args(mrb, "o", &text_input);
 
-  Gosu_Window_set_text_input(mrb_gosu_window_get_ptr(mrb, self), mrb_gosu_text_input_get_ptr(mrb, text_input));
+  if (!mrb_nil_p(text_input)) {
+    Gosu_Window_set_text_input(mrb_gosu_window_get_ptr(mrb, self), mrb_gosu_text_input_get_ptr(mrb, text_input));
+  } else {
+    Gosu_Window_set_text_input(mrb_gosu_window_get_ptr(mrb, self), NULL);
+  }
 
   mrb_value old_text_input;
   mrb_gosu_window_data_t *data = DATA_PTR(self);
   old_text_input = data->text_input;
 
-  if (mrb_obj_is_instance_of(mrb, old_text_input, mrb_gosu_text_input)) {
+  if (mrb_obj_is_kind_of(mrb, old_text_input, mrb_gosu_text_input)) {
     mrb_gc_unregister(mrb, old_text_input);
   }
 
-  if (mrb_obj_is_instance_of(mrb, text_input, mrb_gosu_text_input)) {
+  if (mrb_obj_is_kind_of(mrb, text_input, mrb_gosu_text_input)) {
     mrb_gc_register(mrb, text_input);
   }
 

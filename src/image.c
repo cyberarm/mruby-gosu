@@ -100,6 +100,34 @@ mrb_gosu_image_new_from_pointer(mrb_state *mrb, mrb_value self)
   return self;
 }
 
+static mrb_value
+mrb_gosu_image_from_text(mrb_state *mrb, mrb_value self)
+{
+  mrb_value text, font;
+  mrb_float line_height, spacing;
+  mrb_int width, align, font_flags, image_flags;
+  mrb_get_args(mrb, "SfSifiii", &text, &line_height, &font, &width, &spacing, &align, &font_flags, &image_flags);
+
+  Gosu_Image *pointer = Gosu_Image_create_from_text(mrb_string_cstr(mrb, text), mrb_string_cstr(mrb, font), line_height, width, spacing, align, font_flags, image_flags);
+  mrb_value image = mrb_cptr_value(mrb, pointer);
+
+  return mrb_obj_new(mrb, mrb_gosu_image, 1, &image);
+}
+
+static mrb_value
+mrb_gosu_image_from_markup(mrb_state *mrb, mrb_value self)
+{
+  mrb_value markup, font;
+  mrb_float line_height, spacing;
+  mrb_int width, align, font_flags, image_flags;
+  mrb_get_args(mrb, "SfSifiii", &markup, &line_height, &font, &width, &spacing, &align, &font_flags, &image_flags);
+
+  Gosu_Image *pointer = Gosu_Image_create_from_markup(mrb_string_cstr(mrb, markup), mrb_string_cstr(mrb, font), line_height, width, spacing, align, font_flags, image_flags);
+  mrb_value image = mrb_cptr_value(mrb, pointer);
+
+  return mrb_obj_new(mrb, mrb_gosu_image, 1, &image);
+}
+
 // TODO: This is broken.
 // More research into how to work with binary strings in mruby is needed.
 static mrb_value
@@ -222,8 +250,8 @@ void mrb_gosu_image_init(mrb_state *mrb, struct RClass *mrb_gosu)
 
   mrb_define_class_method(mrb, mrb_gosu_image, "_load_tiles", mrb_gosu_image_load_tiles, MRB_ARGS_REQ(4));
   mrb_define_class_method(mrb, mrb_gosu_image, "_from_blob", mrb_gosu_image_from_blob, MRB_ARGS_REQ(4));
-  // mrb_define_class_method(mrb, mrb_gosu_image, "_from_text", mrb_gosu_image_from_text, MRB_ARGS_REQ(4));
-  // mrb_define_class_method(mrb, mrb_gosu_image, "_from_markup", mrb_gosu_image_from_markup, MRB_ARGS_REQ(4));
+  mrb_define_class_method(mrb, mrb_gosu_image, "_from_text", mrb_gosu_image_from_text, MRB_ARGS_REQ(8));
+  mrb_define_class_method(mrb, mrb_gosu_image, "_from_markup", mrb_gosu_image_from_markup, MRB_ARGS_REQ(8));
 
   mrb_define_method(mrb, mrb_gosu_image, "_new", mrb_gosu_image_new, MRB_ARGS_REQ(2));
   mrb_define_method(mrb, mrb_gosu_image, "_new_from_pointer", mrb_gosu_image_new_from_pointer, MRB_ARGS_REQ(1));
