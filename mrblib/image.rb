@@ -1,7 +1,7 @@
 module Gosu
   class Image
     def self.load_tiles(path, tile_width, tile_height, tileable: false, retro: false)
-      _load_tiles(path, tile_width, tile_height, Gosu.image_flags(tileable: false, retro: false))
+      _load_tiles(path, tile_width, tile_height, Gosu.image_flags(tileable: tileable, retro: retro))
     end
 
     def self.from_blob(width, height, blob = "\0\0\0\0" * (width * height), tileable: false, retro: false)
