@@ -128,20 +128,15 @@ mrb_gosu_image_from_markup(mrb_state *mrb, mrb_value self)
   return mrb_obj_new(mrb, mrb_gosu_image, 1, &image);
 }
 
-// TODO: This is broken.
-// More research into how to work with binary strings in mruby is needed.
 static mrb_value
 mrb_gosu_image_from_blob(mrb_state *mrb, mrb_value self)
 {
-  mrb_value blob;
-  mrb_int width, height, flags;
-  mrb_get_args(mrb, "iioi", &width, &height, &blob, &flags);
-
-  unsigned char *c_blob;
-  c_blob = mrb_basic_ptr(blob);
+  unsigned char *blob;
+  mrb_int width, height, length, flags;
+  mrb_get_args(mrb, "iisi", &width, &height, &blob, &length, &flags);
 
   Gosu_Image *image;
-  image = Gosu_Image_create_from_blob(c_blob, strlen(c_blob), width, height, flags);
+  image = Gosu_Image_create_from_blob(blob, length, width, height, flags);
 
   mrb_value pointer = mrb_cptr_value(mrb, image);
 
