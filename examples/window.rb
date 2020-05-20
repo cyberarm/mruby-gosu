@@ -6,7 +6,6 @@ class Window < Gosu::Window
 
     @square = Gosu::Image.from_blob(10, 10, "\xff\xff\xff\x88" * 100)
     @square_color = Gosu::Color.new(0xff_ffffff)
-    p Gosu::Color.from_hsv(45, 1.0, 1.0)
   end
 
   def draw
