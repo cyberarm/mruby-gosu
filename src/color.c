@@ -11,7 +11,7 @@ mrb_gosu_color_create(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(Gosu_Color_create(i));
 }
 
-static mrb_value
+static mrb_value // FIXME: returns -1 for some reason
 mrb_gosu_color_create_argb(mrb_state *mrb, mrb_value self)
 {
   mrb_int a, r, g, b;

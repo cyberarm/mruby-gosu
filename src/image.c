@@ -224,8 +224,12 @@ mrb_gosu_image_save(mrb_state *mrb, mrb_value self) {
 
 static mrb_value
 mrb_gosu_image_to_blob(mrb_state *mrb, mrb_value self) {
-  // TODO: see if mruby can handle unsigned char
-  return mrb_str_new_cstr(mrb, Gosu_Image_to_blob(mrb_gosu_image_get_ptr(mrb, self)));
+  size_t length;
+  Gosu_Image *image;
+  image = mrb_gosu_image_get_ptr(mrb, self);
+  length = Gosu_Image_width(image) * Gosu_Image_height(image) * 4; // Gosu::Color is 4 bytes
+
+  return mrb_str_new(mrb, Gosu_Image_to_blob(image), length);
 }
 
 static mrb_value
