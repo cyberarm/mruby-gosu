@@ -1,14 +1,14 @@
 module Gosu
   def self.render(width, height, retro: false, &block)
-    _render(width, height, block, Gosu.image_flags(retro: retro))
+    _render(width, height, Gosu.image_flags(retro: retro), &block)
   end
 
   def self.rotate(angle, around_x = 0, around_y = 0, &block)
-    _rotate(angle, around_x, around_y, block)
+    _rotate(angle, around_x, around_y, &block)
   end
 
   def self.scale(x, y, around_x = 0, around_y = 0, &block)
-    _scale(x, y, around_x, around_y, block)
+    _scale(x, y, around_x, around_y, &block)
   end
 
   def self.draw_line(x1, y1, c1, x2, y2, c2, z = 0, mode = :default)
