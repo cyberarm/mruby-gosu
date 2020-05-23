@@ -34,6 +34,19 @@ mrb_gosu_song_get_ptr(mrb_state *mrb, mrb_value self)
   return data->song;
 }
 
+static mrb_value
+mrb_gosu_song_current_song(mrb_state *mrb, mrb_value self)
+{
+  Gosu_Song *song;
+  song = Gosu_Song_current_song();
+
+  if (song != NULL) {
+    return mrb_cptr_value(mrb, song);
+  } else {
+    return mrb_nil_value();
+  }
+}
+
 mrb_value
 mrb_gosu_song_initialize(mrb_state *mrb, mrb_value self)
 {
@@ -115,6 +128,8 @@ mrb_gosu_song_stop(mrb_state *mrb, mrb_value self)
 void mrb_gosu_song_init(mrb_state *mrb, struct RClass *mrb_gosu)
 {
   mrb_gosu_song = mrb_define_class_under(mrb, mrb_gosu, "Song", mrb->object_class);
+
+  mrb_define_class_method(mrb, mrb_gosu_song, "_current_song", mrb_gosu_song_current_song, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, mrb_gosu_song, "initialize", mrb_gosu_song_initialize, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, mrb_gosu_song, "volume=",    mrb_gosu_song_set_volume, MRB_ARGS_REQ(1));
