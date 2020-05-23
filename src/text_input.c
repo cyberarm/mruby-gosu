@@ -1,7 +1,6 @@
 #include "text_input.h"
 
-typedef struct mrb_gosu_text_input_callback
-{
+typedef struct mrb_gosu_text_input_callback {
   mrb_state *mrb;
   mrb_value self;
 } mrb_gosu_text_input_callback;
@@ -38,6 +37,15 @@ mrb_gosu_text_input_get_ptr(mrb_state *mrb, mrb_value self)
   return data->text_input;
 }
 
+void mrb_gosu_text_input_filter_callback(mrb_gosu_text_input_callback *data, const char *text)
+{
+  const char *result;
+  result = mrb_string_cstr(data->mrb, mrb_funcall(data->mrb, data->self, "filter", 1, mrb_str_new_cstr(data->mrb, text) ));
+  printf("STRING: %s\n", result);
+
+  Gosu_TextInput_set_filter_result(mrb_gosu_text_input_get_ptr(data->mrb, data->self), result);
+}
+
 static mrb_value
 mrb_gosu_text_input_initialize(mrb_state *mrb, mrb_value self)
 {
@@ -59,6 +67,12 @@ mrb_gosu_text_input_initialize(mrb_state *mrb, mrb_value self)
     mrb_raise(mrb, E_RUNTIME_ERROR, "insufficient memory.");
   }
   data->text_input = Gosu_TextInput_create();
+
+  static mrb_gosu_text_input_callback callback;
+  callback.mrb = mrb;
+  callback.self = self;
+
+  Gosu_TextInput_set_filter(data->text_input, mrb_gosu_text_input_filter_callback, &callback);
 
   DATA_PTR(self) = data;
 
