@@ -17,8 +17,6 @@ HEIGHT = 480
 GAME_PATH = File.expand_path("..", __FILE__)
 SMOKE     = Gosu::Image.new("#{GAME_PATH}/media/smoke.png")
 
-TRANSPARENT = 0
-
 # The class for this game's map.
 # Design:
 # * Dynamic map creation at startup, holding it as a Gosu::Image in @image
@@ -41,7 +39,7 @@ class Map
     @crater_segments = generate_circle(CRATER_RADIUS)
 
     # Create the map
-    @pixels = []
+    @binary_map = []
     create_map
     extract_map_pixels
   end
@@ -76,8 +74,8 @@ class Map
     return images
   end
 
-  def pixel_color(x, y)
-    @pixels[(x + WIDTH * y)]
+  def pixel_solid?(x, y)
+    @binary_map[(x + WIDTH * y)]
   end
 
   def solid?(x, y)
@@ -86,7 +84,7 @@ class Map
     # Map is closed on all other sides.
     return true if x < 0 || x >= WIDTH || y >= HEIGHT
     # Inside of the map, determine solidity from the map image.
-    pixel_color(x, y).alpha != TRANSPARENT
+    pixel_solid?(x, y)
   end
 
   def draw
@@ -140,18 +138,14 @@ class Map
 
   private def extract_map_pixels
     data = @image.to_blob.bytes
-    @pixels.clear
+    @binary_map.clear
 
     HEIGHT.times do |y|
       WIDTH.times do |x|
         index = (x + WIDTH * y) * 4
         r, g, b, alpha = data[index, 4]
 
-        if alpha == 0
-          @pixels << Gosu::Color::NONE
-        else
-          @pixels << Gosu::Color::BLACK
-        end
+        @binary_map << (alpha != 0)
       end
     end
   end
@@ -344,7 +338,7 @@ class Particle
   def update
     @y -= 5
     @x = @x - 1 + rand(3)
-    @color.alpha -= 5
+    @color.alpha -= 4
 
     # Remove if faded completely.
     return @color.alpha > 0
