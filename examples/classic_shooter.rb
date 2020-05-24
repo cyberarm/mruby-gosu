@@ -16,6 +16,7 @@ HEIGHT = 480
 
 GAME_PATH = File.expand_path("..", __FILE__)
 SMOKE     = Gosu::Image.new("#{GAME_PATH}/media/smoke.png")
+TRANSPARENT = 0
 
 # The class for this game's map.
 # Design:
@@ -39,7 +40,7 @@ class Map
     @crater_segments = generate_circle(CRATER_RADIUS)
 
     # Create the map
-    @binary_map = []
+    @map_data = []
     create_map
     extract_map_pixels
   end
@@ -75,7 +76,7 @@ class Map
   end
 
   def pixel_solid?(x, y)
-    @binary_map[(x + WIDTH * y)]
+    @map_data[(x + WIDTH * y) * 4 + 4] != TRANSPARENT
   end
 
   def solid?(x, y)
@@ -137,17 +138,7 @@ class Map
   end
 
   private def extract_map_pixels
-    data = @image.to_blob.bytes
-    @binary_map.clear
-
-    HEIGHT.times do |y|
-      WIDTH.times do |x|
-        index = (x + WIDTH * y) * 4
-        r, g, b, alpha = data[index, 4]
-
-        @binary_map << (alpha != 0)
-      end
-    end
+    @map_data = @image.to_blob.bytes
   end
 end
 
