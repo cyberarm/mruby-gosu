@@ -184,6 +184,37 @@ mrb_gosu_transform(mrb_state *mrb, mrb_value self)
 }
 
 mrb_value
+mrb_gosu_gl(mrb_state *mrb, mrb_value self)
+{
+  mrb_value block;
+  mrb_get_args(mrb, "&", &block);
+
+  mrb_gosu_callback_data data;
+  data.mrb = mrb;
+  data.block = block;
+
+  Gosu_gl(mrb_gosu_callback_function, &data);
+
+  return self;
+}
+
+mrb_value
+mrb_gosu_gl_z(mrb_state *mrb, mrb_value self)
+{
+  mrb_value block;
+  mrb_int z;
+  mrb_get_args(mrb, "i&", &z, &block);
+
+  mrb_gosu_callback_data data;
+  data.mrb = mrb;
+  data.block = block;
+
+  Gosu_gl_z(z, mrb_gosu_callback_function, &data);
+
+  return self;
+}
+
+mrb_value
 mrb_gosu_render(mrb_state *mrb, mrb_value self)
 {
   mrb_int width, height, flags;
@@ -213,6 +244,18 @@ mrb_gosu_record(mrb_state *mrb, mrb_value self)
   mrb_value pointer = mrb_cptr_value( mrb, Gosu_record(width, height, mrb_gosu_callback_function, &data) );
 
   return mrb_obj_new(mrb, mrb_gosu_image, 1, &pointer);
+}
+
+mrb_value
+mrb_gosu_clip_to(mrb_state *mrb, mrb_value self)
+{
+  mrb_int x, y, width, height;
+  mrb_value block;
+  mrb_get_args(mrb, "iiii&", &x, &y, &width, &height, &block);
+
+  Gosu_clip_to(x, y, width, height, mrb_gosu_callback_function, &block);
+
+  return self;
 }
 
 mrb_value
@@ -315,7 +358,10 @@ void mrb_gosu_init(mrb_state *mrb, struct RClass *mrb_gosu) {
   mrb_define_module_function(mrb, mrb_gosu, "_rotate", mrb_gosu_rotate, MRB_ARGS_REQ(4));
   mrb_define_module_function(mrb, mrb_gosu, "_scale", mrb_gosu_scale, MRB_ARGS_REQ(5));
   mrb_define_module_function(mrb, mrb_gosu, "transform", mrb_gosu_transform, MRB_ARGS_REQ(17));
+  mrb_define_module_function(mrb, mrb_gosu, "clip_to", mrb_gosu_clip_to, MRB_ARGS_REQ(5));
 
+  mrb_define_module_function(mrb, mrb_gosu, "_gl", mrb_gosu_gl, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, mrb_gosu, "_gl_z", mrb_gosu_gl_z, MRB_ARGS_REQ(2));
   mrb_define_module_function(mrb, mrb_gosu, "_render", mrb_gosu_render, MRB_ARGS_REQ(4));
   mrb_define_module_function(mrb, mrb_gosu, "record", mrb_gosu_record, MRB_ARGS_REQ(3));
 

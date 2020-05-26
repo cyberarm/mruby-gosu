@@ -1,4 +1,12 @@
 module Gosu
+  def self.gl(z = nil, &block)
+    if z
+      _gl_z(z, &block)
+    else
+      _gl(&block)
+    end
+  end
+
   def self.render(width, height, retro: false, &block)
     _render(width, height, Gosu.image_flags(retro: retro), &block)
   end

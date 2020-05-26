@@ -8,6 +8,7 @@ typedef struct mrb_gosu_text_input_callback {
 typedef struct mrb_gosu_text_input_data_t
 {
   Gosu_TextInput *text_input;
+  mrb_gosu_text_input_callback *callback;
 } mrb_gosu_text_input_data_t;
 
 static void
@@ -20,6 +21,10 @@ mrb_gosu_text_input_data_free(mrb_state *mrb, void *ptr)
     if (data->text_input != NULL)
     {
       Gosu_TextInput_destroy(data->text_input);
+    }
+    if (data->callback != NULL)
+    {
+      mrb_free(mrb, data->callback);
     }
     mrb_free(mrb, data);
   }
@@ -37,13 +42,14 @@ mrb_gosu_text_input_get_ptr(mrb_state *mrb, mrb_value self)
   return data->text_input;
 }
 
-void mrb_gosu_text_input_filter_callback(mrb_gosu_text_input_callback *data, const char *text)
+void mrb_gosu_text_input_filter_callback(void *data, const char *text)
 {
   const char *result;
-  result = mrb_string_cstr(data->mrb, mrb_funcall(data->mrb, data->self, "filter", 1, mrb_str_new_cstr(data->mrb, text) ));
-  printf("STRING: %s\n", result);
+  mrb_gosu_text_input_callback *callback;
+  callback = data;
 
-  Gosu_TextInput_set_filter_result(mrb_gosu_text_input_get_ptr(data->mrb, data->self), result);
+  result = mrb_string_cstr(callback->mrb, mrb_funcall(callback->mrb, callback->self, "filter", 1, mrb_str_new_cstr(callback->mrb, text) ));
+  Gosu_TextInput_set_filter_result(mrb_gosu_text_input_get_ptr(callback->mrb, callback->self), result);
 }
 
 static mrb_value
@@ -68,11 +74,12 @@ mrb_gosu_text_input_initialize(mrb_state *mrb, mrb_value self)
   }
   data->text_input = Gosu_TextInput_create();
 
-  static mrb_gosu_text_input_callback callback;
-  callback.mrb = mrb;
-  callback.self = self;
+  mrb_gosu_text_input_callback *callback;
+  callback = mrb_malloc(mrb, sizeof(mrb_gosu_text_input_callback));
+  callback->mrb = mrb;
+  callback->self = self;
 
-  Gosu_TextInput_set_filter(data->text_input, mrb_gosu_text_input_filter_callback, &callback);
+  Gosu_TextInput_set_filter(data->text_input, mrb_gosu_text_input_filter_callback, callback);
 
   DATA_PTR(self) = data;
 
