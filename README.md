@@ -1,7 +1,9 @@
 # mruby-gosu
 mruby wrapper around [Gosu](https://github.com/gosu/gosu)
 
-**Status:** Currently unusable for anything except showing a window.
+**Status:**
+* Compatible with Gosu 0.15.2
+* An [updated version](https://github.com/cyberarm/jcaster) of Jahmaican's original [jCaster](https://github.com/Jahmaican/jcaster) fully works.
 
 ## Usage
 Add this mruby gem to your build_config.rb
@@ -10,4 +12,5 @@ conf.gem github: "cyberarm/mruby-gosu"
 ```
 
 ## Development
-* Install Gosu as a system library
+* Install [Gosu](https://github.com/gosu/gosu) as a system library, [see wiki](https://github.com/gosu/gosu/wiki/Getting-Started-on-Linux#compiling-gosu-for-c).
+(Note: may need to edit `gosu/build/cmake_install.cmake` to change `set(CMAKE_INSTALL_PREFIX "/usr/local")` to `set(CMAKE_INSTALL_PREFIX "/usr")`)
