@@ -1,7 +1,5 @@
 #include "font.h"
 
-struct RClass *mrb_gosu_font;
-
 typedef struct mrb_gosu_font_data_t
 {
   Gosu_Font *font;
@@ -30,7 +28,7 @@ static struct mrb_data_type const mrb_gosu_font_data_type = {
 Gosu_Font *
 mrb_gosu_font_get_ptr(mrb_state *mrb, mrb_value self)
 {
-  mrb_gosu_font_data_t *data = DATA_PTR(self);
+  mrb_gosu_font_data_t *data = (mrb_gosu_font_data_t *)DATA_PTR(self);
   return data->font;
 }
 

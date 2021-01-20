@@ -1,7 +1,5 @@
 #include "color.h"
 
-struct RClass *mrb_gosu_color;
-
 static mrb_value
 mrb_gosu_color_create(mrb_state *mrb, mrb_value self)
 {

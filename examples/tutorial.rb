@@ -65,10 +65,10 @@ class Star
 
   def initialize(animation)
     @animation = animation
-    @color = 0xffffffff#Gosu::Color::BLACK.dup
-    # @color.red = rand(256 - 40) + 40
-    # @color.green = rand(256 - 40) + 40
-    # @color.blue = rand(256 - 40) + 40
+    @color = Gosu::Color::BLACK.dup
+    @color.red = rand(256 - 40) + 40
+    @color.green = rand(256 - 40) + 40
+    @color.blue = rand(256 - 40) + 40
     @x = rand * 640
     @y = rand * 480
   end
@@ -97,13 +97,13 @@ class Tutorial < Gosu::Window
   end
 
   def update
-    if Gosu.button_down? Gosu::KB_LEFT# or Gosu.button_down? Gosu::GP_LEFT
+    if Gosu.button_down? Gosu::KB_LEFT or Gosu.button_down? Gosu::GP_LEFT
       @player.turn_left
     end
-    if Gosu.button_down? Gosu::KB_RIGHT# or Gosu.button_down? Gosu::GP_RIGHT
+    if Gosu.button_down? Gosu::KB_RIGHT or Gosu.button_down? Gosu::GP_RIGHT
       @player.turn_right
     end
-    if Gosu.button_down? Gosu::KB_UP# or Gosu.button_down? Gosu::GP_BUTTON_0
+    if Gosu.button_down? Gosu::KB_UP or Gosu.button_down? Gosu::GP_BUTTON_0
       @player.accelerate
     end
     @player.move
@@ -118,7 +118,7 @@ class Tutorial < Gosu::Window
     @background_image.draw(0, 0, ZOrder::BACKGROUND)
     @player.draw
     @stars.each { |star| star.draw }
-    @font.draw_text("Score: #{@player.score}", 10, 10, ZOrder::UI, 1.0, 1.0, 0xffffff00)#Gosu::Color::YELLOW)
+    @font.draw_text("Score: #{@player.score}", 10, 10, ZOrder::UI, 1.0, 1.0, Gosu::Color::YELLOW)
   end
 
   def button_down(id)

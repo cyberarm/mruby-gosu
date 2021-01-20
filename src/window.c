@@ -1,8 +1,6 @@
 #include "window.h"
 #include "text_input.h"
 
-struct RClass *mrb_gosu_window;
-
 typedef struct mrb_gosu_window_callback {
   mrb_state *mrb;
   mrb_value self;
@@ -34,7 +32,7 @@ const mrb_gosu_window_data_type = {
 Gosu_Window*
 mrb_gosu_window_get_ptr(mrb_state *mrb, mrb_value self)
 {
-  mrb_gosu_window_data_t *data = DATA_PTR(self);
+  mrb_gosu_window_data_t *data = (mrb_gosu_window_data_t *)DATA_PTR(self);
   return data->window;
 }
 
@@ -123,7 +121,7 @@ mrb_gosu_window_show(mrb_state *mrb, mrb_value self)
 {
   Gosu_Window_show(mrb_gosu_window_get_ptr(mrb, self));
 
-  return self;
+  return mrb_nil_value();
 }
 
 static mrb_value
@@ -162,13 +160,15 @@ mrb_gosu_window_width(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value( Gosu_Window_width(mrb_gosu_window_get_ptr(mrb, self)) );
 }
 
-void
+static mrb_value
 mrb_gosu_window_set_width(mrb_state *mrb, mrb_value self)
 {
   mrb_int width;
   mrb_get_args(mrb, "i", &width);
 
   Gosu_Window_set_width(mrb_gosu_window_get_ptr(mrb, self), width);
+
+  return mrb_nil_value();
 }
 
 static mrb_value
@@ -177,13 +177,15 @@ mrb_gosu_window_height(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value( Gosu_Window_height(mrb_gosu_window_get_ptr(mrb, self)) );
 }
 
-void
+static mrb_value
 mrb_gosu_window_set_height(mrb_state *mrb, mrb_value self)
 {
   mrb_int height;
   mrb_get_args(mrb, "i", &height);
 
   Gosu_Window_set_height(mrb_gosu_window_get_ptr(mrb, self), height);
+
+  return mrb_nil_value();
 }
 
 static mrb_value
@@ -192,12 +194,15 @@ mrb_gosu_window_update_interval(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(Gosu_Window_update_interval(mrb_gosu_window_get_ptr(mrb, self)));
 }
 
-void mrb_gosu_window_set_update_interval(mrb_state *mrb, mrb_value self)
+static mrb_value
+mrb_gosu_window_set_update_interval(mrb_state *mrb, mrb_value self)
 {
   mrb_float interval;
   mrb_get_args(mrb, "f", &interval);
 
   Gosu_Window_set_update_interval(mrb_gosu_window_get_ptr(mrb, self), interval);
+
+  return mrb_nil_value();
 }
 
 static mrb_value
@@ -206,12 +211,15 @@ mrb_gosu_window_mouse_x(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(Gosu_Window_mouse_x(mrb_gosu_window_get_ptr(mrb, self)));
 }
 
-void mrb_gosu_window_set_mouse_x(mrb_state *mrb, mrb_value self)
+static mrb_value
+mrb_gosu_window_set_mouse_x(mrb_state *mrb, mrb_value self)
 {
   mrb_int point;
   mrb_get_args(mrb, "i", &point);
 
   Gosu_Window_set_mouse_x(mrb_gosu_window_get_ptr(mrb, self), point);
+
+  return mrb_nil_value();
 }
 
 static mrb_value
@@ -220,12 +228,15 @@ mrb_gosu_window_mouse_y(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(Gosu_Window_mouse_y(mrb_gosu_window_get_ptr(mrb, self)));
 }
 
-void mrb_gosu_window_set_mouse_y(mrb_state *mrb, mrb_value self)
+static mrb_value
+mrb_gosu_window_set_mouse_y(mrb_state *mrb, mrb_value self)
 {
   mrb_int point;
   mrb_get_args(mrb, "i", &point);
 
   Gosu_Window_set_mouse_y(mrb_gosu_window_get_ptr(mrb, self), point);
+
+  return mrb_nil_value();
 }
 
 static mrb_value
@@ -248,14 +259,14 @@ mrb_gosu_window_text_input(mrb_state *mrb, mrb_value self)
 
   if (text_input != NULL)
   {
-    mrb_gosu_window_data_t *data = DATA_PTR(self);
+    mrb_gosu_window_data_t *data = (mrb_gosu_window_data_t *)DATA_PTR(self);
     return data->text_input;
   } else {
     return mrb_nil_value();
   }
 }
 
-void
+mrb_value
 mrb_gosu_window_set_text_input(mrb_state *mrb, mrb_value self)
 {
   mrb_value text_input;
@@ -268,7 +279,7 @@ mrb_gosu_window_set_text_input(mrb_state *mrb, mrb_value self)
   }
 
   mrb_value old_text_input;
-  mrb_gosu_window_data_t *data = DATA_PTR(self);
+  mrb_gosu_window_data_t *data = (mrb_gosu_window_data_t *)DATA_PTR(self);
   old_text_input = data->text_input;
 
   if (mrb_obj_is_kind_of(mrb, old_text_input, mrb_gosu_text_input)) {
@@ -280,6 +291,8 @@ mrb_gosu_window_set_text_input(mrb_state *mrb, mrb_value self)
   }
 
   data->text_input = text_input;
+
+  return mrb_nil_value();
 }
 
 static mrb_value
@@ -297,6 +310,7 @@ mrb_gosu_window_new(mrb_state *mrb, mrb_value self)
   mrb_float update_interval;
   mrb_bool fullscreen, resizable;
   mrb_gosu_window_data_t *data;
+  unsigned window_flags = 0;
 
   int const argc = mrb_get_args(mrb, "iibfb", &width, &height, &fullscreen, &update_interval, &resizable);
   if (argc != 5)
@@ -319,7 +333,14 @@ mrb_gosu_window_new(mrb_state *mrb, mrb_value self)
   {
     mrb_raise(mrb, E_RUNTIME_ERROR, "insufficient memory.");
   }
-  data->window = Gosu_Window_create(width, height, fullscreen, update_interval, resizable);
+
+  if (fullscreen)
+    window_flags |= 1;
+  if (fullscreen)
+    window_flags |= 2;
+  // window_flags |= 4;
+
+  data->window = Gosu_Window_create(width, height, window_flags, update_interval);
 
   DATA_PTR(self) = data;
 

@@ -8,7 +8,9 @@
 #include "mruby/array.h"
 #include "stdbool.h"
 #include "string.h"
-#include <Gosu/Gosu.h>
+#include "Gosu.h"
 #include "channel.h"
+
+static struct RClass *mrb_gosu_sample;
 
 void mrb_gosu_sample_init(mrb_state *mrb, struct RClass *mrb_gosu);

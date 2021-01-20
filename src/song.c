@@ -1,7 +1,5 @@
 #include "song.h"
 
-struct RClass *mrb_gosu_song;
-
 typedef struct mrb_gosu_song_data_t
 {
   Gosu_Song *song;
@@ -30,7 +28,7 @@ static struct mrb_data_type const mrb_gosu_song_data_type = {
 Gosu_Song *
 mrb_gosu_song_get_ptr(mrb_state *mrb, mrb_value self)
 {
-  mrb_gosu_song_data_t *data = DATA_PTR(self);
+  mrb_gosu_song_data_t *data = (mrb_gosu_song_data_t *)DATA_PTR(self);
   return data->song;
 }
 

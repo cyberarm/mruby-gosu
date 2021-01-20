@@ -7,7 +7,8 @@
 #include "mruby/array.h"
 #include "stdbool.h"
 #include "string.h"
-#include <Gosu/Gosu.h>
+#include "Gosu.h"
 
-struct RClass *mrb_gosu_channel;
+static struct RClass *mrb_gosu_channel;
+
 void mrb_gosu_channel_init(mrb_state *mrb, struct RClass *mrb_gosu);

@@ -38,7 +38,7 @@ static struct mrb_data_type const mrb_gosu_text_input_data_type = {
 Gosu_TextInput *
 mrb_gosu_text_input_get_ptr(mrb_state *mrb, mrb_value self)
 {
-  mrb_gosu_text_input_data_t *data = DATA_PTR(self);
+  mrb_gosu_text_input_data_t *data = (mrb_gosu_text_input_data_t *)DATA_PTR(self);
   return data->text_input;
 }
 
@@ -46,7 +46,7 @@ void mrb_gosu_text_input_filter_callback(void *data, const char *text)
 {
   const char *result;
   mrb_gosu_text_input_callback *callback;
-  callback = data;
+  callback = (mrb_gosu_text_input_callback *)data;
 
   result = mrb_string_cstr(callback->mrb, mrb_funcall(callback->mrb, callback->self, "filter", 1, mrb_str_new_cstr(callback->mrb, text) ));
   Gosu_TextInput_set_filter_result(mrb_gosu_text_input_get_ptr(callback->mrb, callback->self), result);
@@ -75,7 +75,7 @@ mrb_gosu_text_input_initialize(mrb_state *mrb, mrb_value self)
   data->text_input = Gosu_TextInput_create();
 
   mrb_gosu_text_input_callback *callback;
-  callback = mrb_malloc(mrb, sizeof(mrb_gosu_text_input_callback));
+  callback = (mrb_gosu_text_input_callback *)mrb_malloc(mrb, sizeof(mrb_gosu_text_input_callback));
   callback->mrb = mrb;
   callback->self = self;
 

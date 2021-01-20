@@ -1,5 +1,5 @@
 #include "mruby.h"
-#include <Gosu/Gosu.h>
+#include "Gosu.h"
 #include "window.h"
 #include "text_input.h"
 #include "image.h"
@@ -15,14 +15,16 @@ typedef struct mrb_gosu_callback_data
   mrb_value block;
 } mrb_gosu_callback_data;
 
-mrb_value
+static mrb_value
 mrb_gosu_fps(mrb_state *mrb) {
   return mrb_fixnum_value(Gosu_fps());
 }
 
-mrb_value
+static mrb_value
 mrb_gosu_flush(mrb_state *mrb) {
   Gosu_flush();
+
+  return mrb_nil_value();
 }
 
 mrb_value
@@ -114,8 +116,9 @@ mrb_gosu_draw_rect(mrb_state *mrb, mrb_value self) {
   return self;
 }
 
-void mrb_gosu_callback_function(mrb_gosu_callback_data *data)
+void mrb_gosu_callback_function(void *ptr)
 {
+  mrb_gosu_callback_data *data = (mrb_gosu_callback_data *) ptr;
   mrb_funcall(data->mrb, data->block, "call", 0);
 }
 

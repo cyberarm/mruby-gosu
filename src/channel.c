@@ -1,7 +1,5 @@
 #include "channel.h"
 
-struct RClass *mrb_gosu_channel;
-
 typedef struct mrb_gosu_channel_data_t
 {
   Gosu_Channel *channel;
@@ -30,7 +28,7 @@ static struct mrb_data_type const mrb_gosu_channel_data_type = {
 Gosu_Channel *
 mrb_gosu_channel_get_ptr(mrb_state *mrb, mrb_value self)
 {
-  mrb_gosu_channel_data_t *data = DATA_PTR(self);
+  mrb_gosu_channel_data_t *data = (mrb_gosu_channel_data_t *)DATA_PTR(self);
   return data->channel;
 }
 
@@ -57,7 +55,7 @@ mrb_gosu_channel_initialize(mrb_state *mrb, mrb_value self)
   {
     mrb_raise(mrb, E_RUNTIME_ERROR, "insufficient memory.");
   }
-  data->channel = Gosu_Channel_create(mrb_cptr(channel));
+  data->channel = (Gosu_Channel *)mrb_cptr(channel);
 
   DATA_PTR(self) = data;
 

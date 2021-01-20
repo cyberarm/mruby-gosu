@@ -34,7 +34,7 @@ static struct mrb_data_type const mrb_gosu_image_data_type = {
 Gosu_Image *
 mrb_gosu_image_get_ptr(mrb_state *mrb, mrb_value self)
 {
-  mrb_gosu_image_data_t *data = DATA_PTR(self);
+  mrb_gosu_image_data_t *data = (mrb_gosu_image_data_t *)DATA_PTR(self);
   return data->image;
 }
 
@@ -145,7 +145,7 @@ mrb_gosu_image_from_blob(mrb_state *mrb, mrb_value self)
 
 void mrb_gosu_image_load_tiles_function(void *data, Gosu_Image *image_ptr)
 {
-  mrb_gosu_image_load_tiles_data *_data = data;
+  mrb_gosu_image_load_tiles_data *_data = (mrb_gosu_image_load_tiles_data *)data;
   mrb_value pointer;
   pointer = mrb_cptr_value(_data->mrb, image_ptr);
 
@@ -229,7 +229,7 @@ mrb_gosu_image_to_blob(mrb_state *mrb, mrb_value self) {
   image = mrb_gosu_image_get_ptr(mrb, self);
   length = Gosu_Image_width(image) * Gosu_Image_height(image) * 4; // Gosu::Color is 4 bytes
 
-  return mrb_str_new(mrb, Gosu_Image_to_blob(image), length);
+  return mrb_str_new(mrb, (const char*)Gosu_Image_to_blob(image), length);
 }
 
 static mrb_value

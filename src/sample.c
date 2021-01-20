@@ -1,7 +1,5 @@
 #include "sample.h"
 
-struct RClass *mrb_gosu_sample;
-
 typedef struct mrb_gosu_sample_data_t
 {
   Gosu_Sample *sample;
@@ -30,7 +28,7 @@ static struct mrb_data_type const mrb_gosu_sample_data_type = {
 Gosu_Sample *
 mrb_gosu_sample_get_ptr(mrb_state *mrb, mrb_value self)
 {
-  mrb_gosu_sample_data_t *data = DATA_PTR(self);
+  mrb_gosu_sample_data_t *data = (mrb_gosu_sample_data_t *)DATA_PTR(self);
   return data->sample;
 }
 
