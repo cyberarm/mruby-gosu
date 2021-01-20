@@ -9,7 +9,5 @@
 #include "string.h"
 #include "Gosu_TextInput.h"
 
-static struct RClass *mrb_gosu_text_input;
-
 void mrb_gosu_text_input_init(mrb_state *mrb, struct RClass *mrb_gosu);
 Gosu_TextInput *mrb_gosu_text_input_get_ptr(mrb_state *mrb, mrb_value self);

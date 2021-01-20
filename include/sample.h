@@ -11,6 +11,4 @@
 #include "Gosu.h"
 #include "channel.h"
 
-static struct RClass *mrb_gosu_sample;
-
 void mrb_gosu_sample_init(mrb_state *mrb, struct RClass *mrb_gosu);

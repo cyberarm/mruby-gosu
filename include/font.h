@@ -10,6 +10,4 @@
 #include "Gosu.h"
 #include "image.h"
 
-static struct RClass *mrb_gosu_font;
-
 void mrb_gosu_font_init(mrb_state *mrb, struct RClass *mrb_gosu);

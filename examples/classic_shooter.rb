@@ -34,7 +34,7 @@ class Map
 
   def initialize
     @sky = Gosu::Image.new("#{GAME_PATH}/media/landscape.png", tileable: true)
-    @image = Gosu.render(1, 1) { }
+    @image = Gosu.render(1, 1) {}
 
     # Generate a bunch of single pixel width images used to dig out the craters
     @crater_segments = generate_circle(CRATER_RADIUS)

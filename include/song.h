@@ -10,6 +10,4 @@
 #include "Gosu.h"
 #include "channel.h"
 
-static struct RClass *mrb_gosu_song;
-
 void mrb_gosu_song_init(mrb_state *mrb, struct RClass *mrb_gosu);

@@ -4,8 +4,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/cyberarm/Code/mruby/include/**",
-                "/home/cyberarm/Code/mruby-gosu/include/**"
+                "${workspaceFolder}/../mruby/include/**",
+                "${workspaceFolder}/include/**",
+                "${workspaceFolder}/../gosu/ffi/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
