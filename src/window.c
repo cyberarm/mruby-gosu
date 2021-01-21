@@ -39,7 +39,7 @@ Gosu_Window* mrb_gosu_window_get_ptr(mrb_state* mrb, mrb_value self)
     return data->window;
 }
 
-void mrb_gosu_window_update_callback(void* data)
+static void mrb_gosu_window_update_callback(void* data)
 {
     mrb_gosu_window_callback* callback = (mrb_gosu_window_callback*) data;
     mrb_state* mrb = callback->mrb;
@@ -48,7 +48,7 @@ void mrb_gosu_window_update_callback(void* data)
     mrb_funcall(mrb, self, "update", 0);
 }
 
-void mrb_gosu_window_draw_callback(void* data)
+static void mrb_gosu_window_draw_callback(void* data)
 {
     mrb_gosu_window_callback* callback = (mrb_gosu_window_callback*) data;
     mrb_state* mrb = callback->mrb;
@@ -57,7 +57,7 @@ void mrb_gosu_window_draw_callback(void* data)
     mrb_funcall(mrb, self, "draw", 0);
 }
 
-void mrb_gosu_window_button_down_callback(void* data, unsigned int btn_id)
+static void mrb_gosu_window_button_down_callback(void* data, unsigned int btn_id)
 {
     mrb_gosu_window_callback* callback = (mrb_gosu_window_callback*) data;
     mrb_state* mrb = callback->mrb;
@@ -66,7 +66,7 @@ void mrb_gosu_window_button_down_callback(void* data, unsigned int btn_id)
     mrb_funcall(mrb, self, "button_down", 1, mrb_fixnum_value(btn_id));
 }
 
-void mrb_gosu_window_button_up_callback(void* data, unsigned int btn_id)
+static void mrb_gosu_window_button_up_callback(void* data, unsigned int btn_id)
 {
     mrb_gosu_window_callback* callback = (mrb_gosu_window_callback*) data;
     mrb_state* mrb = callback->mrb;
@@ -90,7 +90,7 @@ static bool mrb_gosu_window_needs_redraw_callback(void* data)
     mrb_state* mrb = callback->mrb;
     mrb_value self = callback->self;
 
-    mrb_funcall(mrb, self, "needs_redraw?", 0);
+    return mrb_bool(mrb_funcall(mrb, self, "needs_redraw?", 0));
 }
 
 static bool mrb_gosu_window_needs_cursor_callback(void* data)
@@ -99,7 +99,7 @@ static bool mrb_gosu_window_needs_cursor_callback(void* data)
     mrb_state* mrb = callback->mrb;
     mrb_value self = callback->self;
 
-    mrb_funcall(mrb, self, "needs_cursor?", 0);
+    return mrb_bool(mrb_funcall(mrb, self, "needs_cursor?", 0));
 }
 
 static void mrb_gosu_window_close_callback(void* data)
