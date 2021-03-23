@@ -1,12 +1,7 @@
 #include "image.h"
+#include "ffi_gosu.h"
 
 extern struct RClass* mrb_gosu_image;
-
-typedef struct mrb_gosu_image_load_tiles_data
-{
-    mrb_state* mrb;
-    mrb_value array;
-} mrb_gosu_image_load_tiles_data;
 
 typedef struct mrb_gosu_image_data_t
 {
@@ -137,7 +132,7 @@ static mrb_value mrb_gosu_image_from_blob(mrb_state* mrb, mrb_value self)
 
 void mrb_gosu_image_load_tiles_function(void* data, Gosu_Image* image_ptr)
 {
-    mrb_gosu_image_load_tiles_data* _data = (mrb_gosu_image_load_tiles_data*) data;
+    mrb_gosu_callback_data* _data = (mrb_gosu_callback_data*) data;
     mrb_value pointer;
     pointer = mrb_cptr_value(_data->mrb, image_ptr);
 
@@ -151,7 +146,7 @@ static mrb_value mrb_gosu_image_load_tiles(mrb_state* mrb, mrb_value self)
     mrb_get_args(mrb, "Siii", &path, &tile_width, &tile_height, &flags);
 
     mrb_value images = mrb_ary_new(mrb);
-    mrb_gosu_image_load_tiles_data data;
+    mrb_gosu_callback_data data;
     data.mrb = mrb;
     data.array = images;
 

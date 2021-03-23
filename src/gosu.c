@@ -8,6 +8,7 @@
 #include "song.h"
 #include "text_input.h"
 #include "window.h"
+#include "ffi_gosu.h"
 
 struct RClass* mrb_gosu_color;
 struct RClass* mrb_gosu_font;
@@ -17,12 +18,6 @@ struct RClass* mrb_gosu_song;
 struct RClass* mrb_gosu_channel;
 struct RClass* mrb_gosu_text_input;
 struct RClass* mrb_gosu_window;
-
-typedef struct mrb_gosu_callback_data
-{
-    mrb_state* mrb;
-    mrb_value block;
-} mrb_gosu_callback_data;
 
 static mrb_value mrb_gosu_fps(mrb_state* mrb, mrb_value self)
 {
@@ -36,9 +31,24 @@ static mrb_value mrb_gosu_flush(mrb_state* mrb, mrb_value self)
     return mrb_nil_value();
 }
 
-static mrb_value mrb_gosu_language(mrb_state* mrb, mrb_value self)
+void mrb_gosu_load_user_languages_function(void* data, const char *language)
 {
-    return mrb_str_new_cstr(mrb, Gosu_language());
+    mrb_gosu_callback_data* _data = (mrb_gosu_callback_data*) data;
+    mrb_value string = mrb_str_new_cstr(_data->mrb, language);
+
+    mrb_ary_push(_data->mrb, _data->array, string);
+}
+
+static mrb_value mrb_gosu_user_languages(mrb_state* mrb, mrb_value self)
+{
+    mrb_value strings = mrb_ary_new(mrb);
+    mrb_gosu_callback_data data;
+    data.mrb = mrb;
+    data.array = strings;
+
+    Gosu_user_languages(mrb_gosu_load_user_languages_function, (void*) &data);
+
+    return strings;
 }
 
 static mrb_value mrb_gosu_milliseconds(mrb_state* mrb, mrb_value self)
@@ -349,7 +359,7 @@ static void mrb_gosu_init(mrb_state* mrb, struct RClass* mrb_gosu)
 {
     mrb_define_module_function(mrb, mrb_gosu, "fps", mrb_gosu_fps, MRB_ARGS_NONE());
     mrb_define_module_function(mrb, mrb_gosu, "flush", mrb_gosu_flush, MRB_ARGS_NONE());
-    mrb_define_module_function(mrb, mrb_gosu, "language", mrb_gosu_language, MRB_ARGS_NONE());
+    mrb_define_module_function(mrb, mrb_gosu, "user_languages", mrb_gosu_user_languages, MRB_ARGS_NONE());
     mrb_define_module_function(mrb, mrb_gosu, "milliseconds", mrb_gosu_milliseconds, MRB_ARGS_NONE());
     mrb_define_module_function(mrb, mrb_gosu, "default_font_name", mrb_gosu_default_font_name, MRB_ARGS_NONE());
 
