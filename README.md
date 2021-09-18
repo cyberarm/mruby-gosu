@@ -12,7 +12,28 @@ conf.gem github: "cyberarm/mruby-gosu"
 ```
 
 ## Development
+### Unix
 * Install [Gosu](https://github.com/gosu/gosu) as a system library, [see wiki](https://github.com/gosu/gosu/wiki/Getting-Started-on-Linux#compiling-gosu-for-c).
-(Note: may need to edit `gosu/build/cmake_install.cmake` to change `set(CMAKE_INSTALL_PREFIX "/usr/local")` to `set(CMAKE_INSTALL_PREFIX "/usr")`)
+(Note: may need to edit `gosu/build/cmake_install.cmake` to change `set(CMAKE_INSTALL_PREFIX "/usr/local")` to `set(CMAKE_INSTALL_PREFIX "/usr")` before running `sudo make install`)
 
-Note: ensure that mruby is compiled with `conf.cc.defines << "MRB_INT64"` or Gosu colors will trigger an integer overflow when compiling.
+Sample MRuby Build Configuration
+```ruby
+MRuby::Build.new do |conf|
+  conf.toolchain
+
+  # include the default GEMs
+  conf.gembox "default"
+
+  conf.gem github: "cyberarm/mruby-gosu"
+  conf.gem github: "mattn/mruby-require"
+
+  # C compiler settings
+  conf.cc.defines = %w(MRB_USE_DEBUG_HOOK MRB_INT64)
+  conf.enable_debug
+  conf.enable_cxx_abi
+  conf.enable_test
+end
+```
+
+### Windows
+No instructions available yet.
