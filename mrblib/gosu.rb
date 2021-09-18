@@ -51,17 +51,17 @@ module Gosu
   def self.image_flags(retro: false, tileable: false)
     flags = 0x0
 
-    flags |= 1 << 5 if retro
-    flags |= 1 << 8 if tileable
+    flags |= 1 << Gosu::IF_RETRO if retro
+    flags |= 1 << Gosu::IF_TILEABLE if tileable
 
     return flags
   end
 
   def self.font_flags(bold: false, italic: false, underline: false)
     flags = 0x0
-    flags |= 1 if bold
-    flags |= 2 if italic
-    flags |= 4 if underline
+    flags |= Gosu::FF_BOLD if bold
+    flags |= Gosu::FF_ITALIC if italic
+    flags |= Gosu::FF_UNDERLINE if underline
 
     return flags
   end
@@ -69,13 +69,13 @@ module Gosu
   def self.font_alignment_flags(mode)
     case mode
     when :left
-      0
+      Gosu::AL_LEFT
     when :right
-      1
+      Gosu::AL_RIGHT
     when :center
-      2
+      Gosu::AL_CENTER
     when :justify
-      3
+      Gosu::AL_JUSTIFY
     else
       return mode if mode.is_a?(Numeric)
       raise ArgumentError, "No such mode: #{mode}"
@@ -85,11 +85,11 @@ module Gosu
   def self.blendmode(mode)
     case mode
     when :default
-      0
+      Gosu::BM_DEFAULT
     when :additive, :add
-      1
+      Gosu::BM_INTERPOLATE
     when :multiply
-      2
+      Gosu::BM_MULTIPLY
     else
       return mode if mode.is_a?(Numeric)
       raise ArgumentError, "No such mode: #{mode}"
