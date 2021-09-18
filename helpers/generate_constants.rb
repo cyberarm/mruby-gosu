@@ -11,14 +11,13 @@ rescue LoadError
 end
 
 module GosuC
-  LIBRARY_PATH = ["gosu", File.expand_path("../../gosu/cmake/build/libgosu.so", File.dirname(__FILE__))]
+  LIBRARY_PATH = ["gosu-ffi", File.expand_path("../../gosu/build/ffi/libgosu-ffi.so", File.dirname(__FILE__))]
 
   extend FFI::Library
   ffi_lib LIBRARY_PATH
 
   # uint32
   constants = [
-    "KB_RANGE_BEGIN",
     "KB_ESCAPE",
     "KB_F1",
     "KB_F2",
@@ -118,9 +117,7 @@ module GosuC
     "KB_NUMPAD_MINUS",
     "KB_NUMPAD_MULTIPLY",
     "KB_NUMPAD_DIVIDE",
-    "KB_RANGE_END",
 
-    "MS_RANGE_BEGIN",
     "MS_LEFT",
     "MS_MIDDLE",
     "MS_RIGHT",
@@ -134,9 +131,7 @@ module GosuC
     "MS_OTHER_5",
     "MS_OTHER_6",
     "MS_OTHER_7",
-    "MS_RANGE_END",
 
-    "GP_RANGE_BEGIN",
     "GP_LEFT",
     "GP_RIGHT",
     "GP_UP",
@@ -242,82 +237,66 @@ module GosuC
     "GP_3_BUTTON_14",
     "GP_3_BUTTON_15",
 
-    # "GP_AXIS_LEFT_X",
-    # "GP_AXIS_LEFT_Y",
-    # "GP_AXIS_RIGHT_X",
-    # "GP_AXIS_RIGHT_Y",
-    # "GP_AXIS_LEFT_TRIGGER",
-    # "GP_AXIS_RIGHT_TRIGGER",
+    "GP_LEFT_STICK_X_AXIS",
+    "GP_LEFT_STICK_Y_AXIS",
+    "GP_RIGHT_STICK_X_AXIS",
+    "GP_RIGHT_STICK_Y_AXIS",
+    "GP_LEFT_TRIGGER_AXIS",
+    "GP_RIGHT_TRIGGER_AXIS",
 
-    # "GP_0_AXIS_LEFT_X",
-    # "GP_0_AXIS_LEFT_Y",
-    # "GP_0_AXIS_RIGHT_X",
-    # "GP_0_AXIS_RIGHT_Y",
-    # "GP_0_AXIS_LEFT_TRIGGER",
-    # "GP_0_AXIS_RIGHT_TRIGGER",
+    "GP_0_LEFT_STICK_X_AXIS",
+    "GP_0_LEFT_STICK_Y_AXIS",
+    "GP_0_RIGHT_STICK_X_AXIS",
+    "GP_0_RIGHT_STICK_Y_AXIS",
+    "GP_0_LEFT_TRIGGER_AXIS",
+    "GP_0_RIGHT_TRIGGER_AXIS",
 
-    # "GP_1_AXIS_LEFT_X",
-    # "GP_1_AXIS_LEFT_Y",
-    # "GP_1_AXIS_RIGHT_X",
-    # "GP_1_AXIS_RIGHT_Y",
-    # "GP_1_AXIS_LEFT_TRIGGER",
-    # "GP_1_AXIS_RIGHT_TRIGGER",
+    "GP_1_LEFT_STICK_X_AXIS",
+    "GP_1_LEFT_STICK_Y_AXIS",
+    "GP_1_RIGHT_STICK_X_AXIS",
+    "GP_1_RIGHT_STICK_Y_AXIS",
+    "GP_1_LEFT_TRIGGER_AXIS",
+    "GP_1_RIGHT_TRIGGER_AXIS",
 
-    # "GP_2_AXIS_LEFT_X",
-    # "GP_2_AXIS_LEFT_Y",
-    # "GP_2_AXIS_RIGHT_X",
-    # "GP_2_AXIS_RIGHT_Y",
-    # "GP_2_AXIS_LEFT_TRIGGER",
-    # "GP_2_AXIS_RIGHT_TRIGGER",
+    "GP_2_LEFT_STICK_X_AXIS",
+    "GP_2_LEFT_STICK_Y_AXIS",
+    "GP_2_RIGHT_STICK_X_AXIS",
+    "GP_2_RIGHT_STICK_Y_AXIS",
+    "GP_2_LEFT_TRIGGER_AXIS",
+    "GP_2_RIGHT_TRIGGER_AXIS",
 
-    # "GP_3_AXIS_LEFT_X",
-    # "GP_3_AXIS_LEFT_Y",
-    # "GP_3_AXIS_RIGHT_X",
-    # "GP_3_AXIS_RIGHT_Y",
-    # "GP_3_AXIS_LEFT_TRIGGER",
-    # "GP_3_AXIS_RIGHT_TRIGGER",
-    "GP_RANGE_END",
+    "GP_3_LEFT_STICK_X_AXIS",
+    "GP_3_LEFT_STICK_Y_AXIS",
+    "GP_3_RIGHT_STICK_X_AXIS",
+    "GP_3_RIGHT_STICK_Y_AXIS",
+    "GP_3_LEFT_TRIGGER_AXIS",
+    "GP_3_RIGHT_TRIGGER_AXIS",
 
-    "NUM_BUTTONS",
-    "NUM_GAMEPADS",
-    "NO_BUTTON",
 
-    "KB_NUM",
-    "MS_NUM",
-    "GP_NUM",
-    "GP_NUM_PER_GAMEPAD",
+
+    "BM_DEFAULT",
+    "BM_INTERPOLATE",
+    "BM_ADD",
+    "BM_MULTIPLY",
+
+    "FF_BOLD",
+    "FF_ITALIC",
+    "FF_UNDERLINE",
+    "FF_COMBINATIONS",
+
+    "AL_LEFT",
+    "AL_RIGHT",
+    "AL_CENTER",
+    "AL_JUSTIFY",
+
+    "IF_SMOOTH",
+    "IF_TILEABLE_LEFT",
+    "IF_TILEABLE_TOP",
+    "IF_TILEABLE_RIGHT",
+    "IF_TILEABLE_BOTTOM",
+    "IF_TILEABLE",
+    "IF_RETRO"
   ]
-
-  # constants = constants + [
-  #   "MAJOR_VERSION",
-  #   "MINOR_VERSION",
-  #   "POINT_VERSION"
-  # ]
-
-  # constants = constants + [
-  #   "AM_DEFAULT",
-  #   "AM_INTERPOLATE",
-  #   "AM_ADD",
-  #   "AM_MULTIPLY",
-
-  #   "FF_BOLD",
-  #   "FF_ITALIC",
-  #   "FF_UNDERLINE",
-  #   "FF_COMBINATIONS",
-
-  #   "AL_LEFT",
-  #   "AL_RIGHT",
-  #   "AL_CENTER",
-  #   "AL_JUSTIFY",
-
-  #   "IF_SMOOTH",
-  #   "IF_TILEABLE_LEFT",
-  #   "IF_TILEABLE_TOP",
-  #   "IF_TILEABLE_RIGHT",
-  #   "IF_TILEABLE_BOTTOM",
-  #   "IF_TILEABLE",
-  #   "IF_RETRO",
-  # ]
 
   constants.each do |const|
     attach_variable :"#{const}", :"Gosu_#{const}", :uint32
