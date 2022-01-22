@@ -91,6 +91,39 @@ static mrb_value mrb_gosu_char_to_button_id(mrb_state* mrb, mrb_value self)
     return mrb_fixnum_value(Gosu_button_char_to_id(str));
 }
 
+static mrb_value mrb_gosu_button_name(mrb_state* mrb, mrb_value self)
+{
+    mrb_int btn_id;
+    mrb_get_args(mrb, "i", &btn_id);
+
+    const char* string;
+    string = Gosu_button_name(btn_id);
+
+    return mrb_str_new_cstr(mrb, string);
+}
+
+static mrb_value mrb_gosu_gamepad_name(mrb_state* mrb, mrb_value self)
+{
+    mrb_int gp_id;
+    mrb_get_args(mrb, "i", &gp_id);
+
+    const char* string;
+    string = Gosu_gamepad_name(gp_id);
+
+    return mrb_str_new_cstr(mrb, string);
+}
+
+static mrb_value mrb_gosu_axis(mrb_state* mrb, mrb_value self)
+{
+    mrb_int gp_id;
+    mrb_get_args(mrb, "i", &gp_id);
+
+    double val;
+    val = Gosu_axis(gp_id);
+
+    return mrb_float_value(mrb, val);
+}
+
 static mrb_value mrb_gosu_draw_line(mrb_state* mrb, mrb_value self)
 {
     mrb_float x1, y1, x2, y2, z;
@@ -366,6 +399,9 @@ static void mrb_gosu_init(mrb_state* mrb, struct RClass* mrb_gosu)
     mrb_define_module_function(mrb, mrb_gosu, "button_down?", mrb_gosu_button_down, MRB_ARGS_REQ(1));
     mrb_define_module_function(mrb, mrb_gosu, "button_id_to_char", mrb_gosu_button_id_to_char, MRB_ARGS_REQ(1));
     mrb_define_module_function(mrb, mrb_gosu, "char_to_button_id", mrb_gosu_char_to_button_id, MRB_ARGS_REQ(1));
+    mrb_define_module_function(mrb, mrb_gosu, "button_name", mrb_gosu_button_name, MRB_ARGS_REQ(1));
+    mrb_define_module_function(mrb, mrb_gosu, "gamepad_name", mrb_gosu_gamepad_name, MRB_ARGS_REQ(1));
+    mrb_define_module_function(mrb, mrb_gosu, "axis", mrb_gosu_axis, MRB_ARGS_REQ(1));
 
     mrb_define_module_function(mrb, mrb_gosu, "_draw_line", mrb_gosu_draw_line, MRB_ARGS_REQ(8));
     mrb_define_module_function(mrb, mrb_gosu, "_draw_quad", mrb_gosu_draw_quad, MRB_ARGS_REQ(14));

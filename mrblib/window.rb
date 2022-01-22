@@ -27,6 +27,18 @@ module Gosu
     def drop(filename)
     end
 
+    def gamepad_connected(index)
+    end
+
+    def gamepad_disconnected(index)
+    end
+
+    def gain_focus
+    end
+
+    def lose_focus
+    end
+
     def close
       close!
     end

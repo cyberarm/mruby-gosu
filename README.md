@@ -2,7 +2,7 @@
 mruby wrapper around [Gosu](https://github.com/gosu/gosu)
 
 **Status:**
-* Compatible with Gosu 1.2.0
+* Compatible with Gosu 1.4.0
 * An [updated version](https://github.com/cyberarm/jcaster) of Jahmaican's original [jCaster](https://github.com/Jahmaican/jcaster) fully works.
 
 ## Usage

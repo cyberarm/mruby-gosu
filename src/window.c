@@ -111,6 +111,42 @@ static void mrb_gosu_window_close_callback(void* data)
     mrb_funcall(mrb, self, "close", 0);
 }
 
+static void mrb_gosu_window_gamepad_connected_callback(void* data, int index)
+{
+    mrb_gosu_window_callback* callback = (mrb_gosu_window_callback*) data;
+    mrb_state* mrb = callback->mrb;
+    mrb_value self = callback->self;
+
+    mrb_funcall(mrb, self, "gamepad_connected", 1, mrb_fixnum_value(index));
+}
+
+static void mrb_gosu_window_gamepad_disconnected_callback(void* data, int index)
+{
+    mrb_gosu_window_callback* callback = (mrb_gosu_window_callback*) data;
+    mrb_state* mrb = callback->mrb;
+    mrb_value self = callback->self;
+
+    mrb_funcall(mrb, self, "gamepad_disconnected", 1, mrb_fixnum_value(index));
+}
+
+static void mrb_gosu_window_gain_focus_callback(void* data)
+{
+    mrb_gosu_window_callback* callback = (mrb_gosu_window_callback*) data;
+    mrb_state* mrb = callback->mrb;
+    mrb_value self = callback->self;
+
+    mrb_funcall(mrb, self, "gain_focus", 0);
+}
+
+static void mrb_gosu_window_lose_focus_callback(void* data)
+{
+    mrb_gosu_window_callback* callback = (mrb_gosu_window_callback*) data;
+    mrb_state* mrb = callback->mrb;
+    mrb_value self = callback->self;
+
+    mrb_funcall(mrb, self, "lose_focus", 0);
+}
+
 static mrb_value mrb_gosu_window_show(mrb_state* mrb, mrb_value self)
 {
     Gosu_Window_show(mrb_gosu_window_get_ptr(mrb, self));
@@ -327,6 +363,10 @@ static mrb_value mrb_gosu_window_new(mrb_state* mrb, mrb_value self)
     Gosu_Window_set_drop(data->window, mrb_gosu_window_drop_callback, &callback);
     Gosu_Window_set_needs_redraw(data->window, mrb_gosu_window_needs_redraw_callback, &callback);
     Gosu_Window_set_needs_cursor(data->window, mrb_gosu_window_needs_cursor_callback, &callback);
+    Gosu_Window_set_gamepad_connected(data->window, mrb_gosu_window_gamepad_connected_callback, &callback);
+    Gosu_Window_set_gamepad_disconnected(data->window, mrb_gosu_window_gamepad_disconnected_callback, &callback);
+    Gosu_Window_set_gain_focus(data->window, mrb_gosu_window_gain_focus_callback, &callback);
+    Gosu_Window_set_lose_focus(data->window, mrb_gosu_window_lose_focus_callback, &callback);
     Gosu_Window_set_close(data->window, mrb_gosu_window_close_callback, &callback);
 
     return self;
