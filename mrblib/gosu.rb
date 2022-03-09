@@ -51,8 +51,8 @@ module Gosu
   def self.image_flags(retro: false, tileable: false)
     flags = 0x0
 
-    flags |= 1 << Gosu::IF_RETRO if retro
-    flags |= 1 << Gosu::IF_TILEABLE if tileable
+    flags |= Gosu::IF_RETRO if retro
+    flags |= Gosu::IF_TILEABLE if tileable
 
     return flags
   end
