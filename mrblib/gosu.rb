@@ -87,7 +87,7 @@ module Gosu
     when :default
       Gosu::BM_DEFAULT
     when :additive, :add
-      Gosu::BM_INTERPOLATE
+      Gosu::BM_ADD
     when :multiply
       Gosu::BM_MULTIPLY
     else
