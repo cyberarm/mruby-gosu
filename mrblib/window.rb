@@ -1,7 +1,7 @@
 module Gosu
   class Window
-    def initialize(width, height, fullscreen: false, update_interval: 16.6667, resizable: false)
-      _new(width, height, fullscreen, update_interval, resizable)
+    def initialize(width, height, fullscreen: false, update_interval: 16.6667, resizable: false, borderless: false)
+      _new(width, height, Gosu.window_flags(fullscreen: fullscreen, resizable: resizable, borderless: borderless), update_interval)
     end
 
     def draw
@@ -11,6 +11,7 @@ module Gosu
     end
 
     def button_down(id)
+      _default_button_down(id)
     end
 
     def button_up(id)

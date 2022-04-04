@@ -226,6 +226,16 @@ static mrb_value mrb_gosu_window_set_update_interval(mrb_state* mrb, mrb_value s
     return mrb_nil_value();
 }
 
+static mrb_value mrb_gosu_window_default_button_down(mrb_state* mrb, mrb_value self)
+{
+    mrb_int id;
+    mrb_get_args(mrb, "i", &id);
+
+    Gosu_Window_default_button_down(mrb_gosu_window_get_ptr(mrb, self), id);
+
+    return mrb_nil_value();
+}
+
 static mrb_value mrb_gosu_window_mouse_x(mrb_state* mrb, mrb_value self)
 {
     return mrb_fixnum_value(Gosu_Window_mouse_x(mrb_gosu_window_get_ptr(mrb, self)));
@@ -256,14 +266,19 @@ static mrb_value mrb_gosu_window_set_mouse_y(mrb_state* mrb, mrb_value self)
     return mrb_nil_value();
 }
 
+static mrb_value mrb_gosu_window_is_fullscreen(mrb_state* mrb, mrb_value self)
+{
+    return mrb_bool_value(Gosu_Window_is_fullscreen(mrb_gosu_window_get_ptr(mrb, self)));
+}
+
 static mrb_value mrb_gosu_window_is_resizable(mrb_state* mrb, mrb_value self)
 {
     return mrb_bool_value(Gosu_Window_is_resizable(mrb_gosu_window_get_ptr(mrb, self)));
 }
 
-static mrb_value mrb_gosu_window_is_fullscreen(mrb_state* mrb, mrb_value self)
+static mrb_value mrb_gosu_window_is_borderless(mrb_state* mrb, mrb_value self)
 {
-    return mrb_bool_value(Gosu_Window_is_fullscreen(mrb_gosu_window_get_ptr(mrb, self)));
+    return mrb_bool_value(Gosu_Window_is_borderless(mrb_gosu_window_get_ptr(mrb, self)));
 }
 
 static mrb_value mrb_gosu_window_text_input(mrb_state* mrb, mrb_value self)
@@ -320,12 +335,11 @@ static mrb_value mrb_gosu_window_new(mrb_state* mrb, mrb_value self)
 {
     mrb_int width, height;
     mrb_float update_interval;
-    mrb_bool fullscreen, resizable;
+    mrb_int window_flags;
     mrb_gosu_window_data_t* data;
-    unsigned window_flags = 0;
 
-    int const argc = mrb_get_args(mrb, "iibfb", &width, &height, &fullscreen, &update_interval, &resizable);
-    if (argc != 5) {
+    int const argc = mrb_get_args(mrb, "iiif", &width, &height, &window_flags, &update_interval);
+    if (argc != 4) {
         mrb_raise(mrb, E_ARGUMENT_ERROR, "wrong number of arguments.");
     }
 
@@ -342,10 +356,6 @@ static mrb_value mrb_gosu_window_new(mrb_state* mrb, mrb_value self)
     if (data == NULL) {
         mrb_raise(mrb, E_RUNTIME_ERROR, "insufficient memory.");
     }
-
-    if (fullscreen) window_flags |= 1;
-    if (fullscreen) window_flags |= 2;
-    // window_flags |= 4;
 
     data->window = Gosu_Window_create(width, height, window_flags, update_interval);
 
@@ -376,7 +386,7 @@ void mrb_gosu_window_init(mrb_state* mrb, struct RClass* mrb_gosu)
 {
     mrb_gosu_window = mrb_define_class_under(mrb, mrb_gosu, "Window", mrb->object_class);
 
-    mrb_define_method(mrb, mrb_gosu_window, "_new", mrb_gosu_window_new, MRB_ARGS_REQ(5));
+    mrb_define_method(mrb, mrb_gosu_window, "_new", mrb_gosu_window_new, MRB_ARGS_REQ(4));
     mrb_define_method(mrb, mrb_gosu_window, "caption", mrb_gosu_window_caption, MRB_ARGS_NONE());
     mrb_define_method(mrb, mrb_gosu_window, "caption=", mrb_gosu_window_set_caption, MRB_ARGS_REQ(1));
     mrb_define_method(mrb, mrb_gosu_window, "width", mrb_gosu_window_width, MRB_ARGS_NONE());
@@ -385,12 +395,14 @@ void mrb_gosu_window_init(mrb_state* mrb, struct RClass* mrb_gosu)
     mrb_define_method(mrb, mrb_gosu_window, "height=", mrb_gosu_window_set_height, MRB_ARGS_REQ(1));
     mrb_define_method(mrb, mrb_gosu_window, "update_interval", mrb_gosu_window_update_interval, MRB_ARGS_NONE());
     mrb_define_method(mrb, mrb_gosu_window, "update_interval=", mrb_gosu_window_set_update_interval, MRB_ARGS_REQ(1));
+    mrb_define_method(mrb, mrb_gosu_window, "_default_button_down", mrb_gosu_window_default_button_down, MRB_ARGS_REQ(1));
     mrb_define_method(mrb, mrb_gosu_window, "mouse_x", mrb_gosu_window_mouse_x, MRB_ARGS_NONE());
     mrb_define_method(mrb, mrb_gosu_window, "mouse_x=", mrb_gosu_window_set_mouse_x, MRB_ARGS_REQ(1));
     mrb_define_method(mrb, mrb_gosu_window, "mouse_y", mrb_gosu_window_mouse_y, MRB_ARGS_NONE());
     mrb_define_method(mrb, mrb_gosu_window, "mouse_y=", mrb_gosu_window_set_mouse_y, MRB_ARGS_REQ(1));
     mrb_define_method(mrb, mrb_gosu_window, "fullscreen?", mrb_gosu_window_is_fullscreen, MRB_ARGS_NONE());
     mrb_define_method(mrb, mrb_gosu_window, "resizable?", mrb_gosu_window_is_resizable, MRB_ARGS_NONE());
+    mrb_define_method(mrb, mrb_gosu_window, "borderless?", mrb_gosu_window_is_borderless, MRB_ARGS_NONE());
     mrb_define_method(mrb, mrb_gosu_window, "text_input", mrb_gosu_window_text_input, MRB_ARGS_NONE());
     mrb_define_method(mrb, mrb_gosu_window, "text_input=", mrb_gosu_window_set_text_input, MRB_ARGS_REQ(1));
     mrb_define_method(mrb, mrb_gosu_window, "show", mrb_gosu_window_show, MRB_ARGS_NONE());

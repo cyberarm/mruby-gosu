@@ -1,4 +1,7 @@
 module Gosu
+  WF_FULLSCREEN = 1
+  WF_RESIZABLE = 2
+  WF_BORDERLESS = 4
   AL_CENTER = 2
   AL_JUSTIFY = 3
   AL_LEFT = 0

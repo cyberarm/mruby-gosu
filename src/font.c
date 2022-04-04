@@ -33,10 +33,10 @@ Gosu_Font* mrb_gosu_font_get_ptr(mrb_state* mrb, mrb_value self)
 mrb_value mrb_gosu_font_initialize(mrb_state* mrb, mrb_value self)
 {
     mrb_value path;
-    mrb_int height, flags;
+    mrb_int height, flags, image_flags;
     mrb_gosu_font_data_t* data;
 
-    mrb_get_args(mrb, "iSi", &height, &path, &flags);
+    mrb_get_args(mrb, "iSii", &height, &path, &flags, &image_flags);
 
     data = (mrb_gosu_font_data_t*) DATA_PTR(self);
 
@@ -51,7 +51,7 @@ mrb_value mrb_gosu_font_initialize(mrb_state* mrb, mrb_value self)
     if (data == NULL) {
         mrb_raise(mrb, E_RUNTIME_ERROR, "insufficient memory.");
     }
-    data->font = Gosu_Font_create(height, mrb_string_cstr(mrb, path), 0);
+    data->font = Gosu_Font_create(height, mrb_string_cstr(mrb, path), flags, image_flags);
 
     DATA_PTR(self) = data;
 
@@ -66,11 +66,6 @@ mrb_value mrb_gosu_font_name(mrb_state* mrb, mrb_value self)
 mrb_value mrb_gosu_font_height(mrb_state* mrb, mrb_value self)
 {
     return mrb_fixnum_value(Gosu_Font_height(mrb_gosu_font_get_ptr(mrb, self)));
-}
-
-mrb_value mrb_gosu_font_flags(mrb_state* mrb, mrb_value self)
-{
-    return mrb_fixnum_value(Gosu_Font_flags(mrb_gosu_font_get_ptr(mrb, self)));
 }
 
 mrb_value mrb_gosu_font_text_width(mrb_state* mrb, mrb_value self)
@@ -161,7 +156,6 @@ void mrb_gosu_font_init(mrb_state* mrb, struct RClass* mrb_gosu)
     mrb_define_method(mrb, mrb_gosu_font, "_new", mrb_gosu_font_initialize, MRB_ARGS_REQ(3));
     mrb_define_method(mrb, mrb_gosu_font, "name", mrb_gosu_font_name, MRB_ARGS_NONE());
     mrb_define_method(mrb, mrb_gosu_font, "height", mrb_gosu_font_height, MRB_ARGS_NONE());
-    mrb_define_method(mrb, mrb_gosu_font, "flags", mrb_gosu_font_flags, MRB_ARGS_NONE());
 
     mrb_define_method(mrb, mrb_gosu_font, "text_width", mrb_gosu_font_text_width, MRB_ARGS_REQ(1));
     mrb_define_method(mrb, mrb_gosu_font, "markup_width", mrb_gosu_font_markup_width, MRB_ARGS_REQ(1));
