@@ -193,7 +193,7 @@ static mrb_value mrb_gosu_rotate(mrb_state* mrb, mrb_value self)
 {
     mrb_float angle, around_x, around_y;
     mrb_value block;
-    mrb_get_args(mrb, "fff&", &around_x, &around_y, &block);
+    mrb_get_args(mrb, "fff&", &angle, & around_x, &around_y, &block);
 
     mrb_gosu_callback_data data;
     data.mrb = mrb;
