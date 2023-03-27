@@ -104,15 +104,15 @@ module Gosu
     end
 
     def ==(other)
-      gl == other&.gl
+      gl == (other.is_a?(Numeric) ? other : other && other.gl)
     end
 
     def <(other)
-      gl < other.gl
+      gl < (other.is_a?(Numeric) ? other : other && other.gl)
     end
 
     def >(other)
-      gl > other.gl
+      gl > (other.is_a?(Numeric) ? other : other && other.gl)
     end
 
     alias hash gl
