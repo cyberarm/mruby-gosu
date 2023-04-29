@@ -23,6 +23,9 @@ module Gosu
     def initialize(*args)
       if args.size == 1
         @color = Color._color_from_integer(args.first)
+      elsif args.size == 3
+        _args = args.map { |i| i.clamp(0, 255) }
+        @color = Color._color_from_argb(255, *_args)
       elsif args.size == 4
         _args = args.map { |i| i.clamp(0, 255) }
         @color = Color._color_from_argb(*_args)

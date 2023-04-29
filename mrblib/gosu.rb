@@ -15,7 +15,7 @@ module Gosu
     _rotate(angle, around_x, around_y, &block)
   end
 
-  def self.scale(x, y, around_x = 0, around_y = 0, &block)
+  def self.scale(x, y = x, around_x = 0, around_y = 0, &block)
     _scale(x, y, around_x, around_y, &block)
   end
 
