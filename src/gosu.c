@@ -19,6 +19,19 @@ struct RClass* mrb_gosu_channel;
 struct RClass* mrb_gosu_text_input;
 struct RClass* mrb_gosu_window;
 
+static mrb_value mrb_gosu_get_clipboard(mrb_state* mrb, mrb_value self) {
+    return mrb_str_new_cstr(mrb, Gosu_clipboard());
+}
+
+static mrb_value mrb_gosu_set_clipboard(mrb_state* mrb, mrb_value self) {
+    mrb_value text;
+    mrb_get_args(mrb, "S", &text);
+
+    Gosu_set_clipboard(mrb_string_cstr(mrb, text));
+
+    return mrb_nil_value();
+}
+
 static mrb_value mrb_gosu_fps(mrb_state* mrb, mrb_value self)
 {
     return mrb_fixnum_value(Gosu_fps());
@@ -390,6 +403,8 @@ static mrb_value mrb_gosu_available_height(mrb_state* mrb, mrb_value self)
 
 static void mrb_gosu_init(mrb_state* mrb, struct RClass* mrb_gosu)
 {
+    mrb_define_module_function(mrb, mrb_gosu, "clipboard", mrb_gosu_get_clipboard, MRB_ARGS_NONE());
+    mrb_define_module_function(mrb, mrb_gosu, "clipboard=", mrb_gosu_set_clipboard, MRB_ARGS_REQ(1));
     mrb_define_module_function(mrb, mrb_gosu, "fps", mrb_gosu_fps, MRB_ARGS_NONE());
     mrb_define_module_function(mrb, mrb_gosu, "flush", mrb_gosu_flush, MRB_ARGS_NONE());
     mrb_define_module_function(mrb, mrb_gosu, "user_languages", mrb_gosu_user_languages, MRB_ARGS_NONE());
