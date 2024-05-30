@@ -121,4 +121,13 @@ class TestGosuModule < MTest::Unit::TestCase
       end
     end
   end
+
+  def test_clipboard
+    Gosu.clipboard = ""
+    assert_equal(Gosu.clipboard, "")
+
+    # If SDL has an error, the result of Gosu.clipboard will be an empty string.
+    Gosu.clipboard = "What hath God wrought"
+    assert_equal(Gosu.clipboard, "What hath God wrought")
+  end
 end
