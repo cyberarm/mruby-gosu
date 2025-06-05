@@ -123,7 +123,7 @@ static mrb_value mrb_gosu_image_from_blob(mrb_state* mrb, mrb_value self)
     mrb_get_args(mrb, "iisi", &width, &height, &blob, &length, &flags);
 
     Gosu_Image* image;
-    image = Gosu_Image_create_from_blob(blob, length, width, height, flags);
+    image = Gosu_Image_create_from_blob(blob, length, width, height, 0, 0, width, height, flags);
 
     mrb_value pointer = mrb_cptr_value(mrb, image);
 
